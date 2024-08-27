@@ -6,7 +6,7 @@ const Header = () => {
     return (
         <Flex justify={"center"} mt={6} mb={12}>
             <Image
-                src={colorMode === "light" ? "../public/dark-logo.svg" : "../public/light-logo.svg"}
+                src={colorMode === "light" ? "/dark-logo.svg" : "/light-logo.svg"}
                 w={6}
                 alt='logo'
                 onClick={toggleColorMode}

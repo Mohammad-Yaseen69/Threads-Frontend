@@ -1,0 +1,13 @@
+.header-icons, .header-icons-light{
+  border-radius: 50%;
+  transition: all 0.3s;
+  padding: 8px;
+}
+
+.header-icons:hover{
+  background-color: #1e1e1e;
+}
+
+.header-icons-light:hover{
+  background-color: #616161;
+}
