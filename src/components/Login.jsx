@@ -12,27 +12,62 @@ import {
   useColorModeValue,
   InputGroup,
   InputRightElement,
+  Link,
 } from '@chakra-ui/react';
 import { useState } from 'react';
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons'
+import { makeRequest } from '../Utils/api';
+import {userAtom} from "../Atoms/user"
+import { useRecoilState } from 'recoil';
 
 
-export default function Login() {
+export default function Login({ setAuthScreen }) {
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
+  const [user, setUser] = useRecoilState(userAtom);
 
-  const handleLogin = () => {
+  const setErrorWithTimeout = (message) => {
+    setError(message)
+    setTimeout(() => {
+      setError("")
+    }, 5000)
+  }
+
+  console.log(user)
+
+  const handleLogin = async () => {
     const isEmail = identifier.includes('@');
+    let inputs = {
+      password: password,
+    }
 
-    console.log(password)
-    // Perform login logic based on whether the input is an email or username
     if (isEmail) {
-      console.log('Logging in with email:', identifier);
-      // Call login function for email
+      inputs.email = identifier
     } else {
-      console.log('Logging in with username:', identifier);
-      // Call login function for username
+      inputs.userName = identifier
+    }
+
+    try {
+      setLoading(true)
+      const res = await makeRequest("users/login", {
+        method: "POST",
+        data: inputs
+      })
+
+      setLoading(false)
+
+      if (res.error) {
+        setErrorWithTimeout(res.error.message)
+      } else {
+        res.response.success && setSuccess(res.response.message)
+        setUser(res.response.data)
+      }
+    } catch (error) {
+      console.log(error)
     }
   };
 
@@ -89,23 +124,23 @@ export default function Login() {
             </FormControl>
 
             <Stack spacing={5}>
-              <Stack
-                direction={{ base: 'column', sm: 'row' }}
-                align={'start'}
-                justify={'right'}
-                cursor={'pointer'}
-              >
-                <Text color={'blue.400'}>Create Account</Text>
-              </Stack>
+
               <Button
                 bg={'blue.400'}
                 color={'white'}
                 _hover={{
                   bg: 'blue.500',
                 }}
+                mt={4}
                 onClick={handleLogin}>
                 Login
               </Button>
+
+              {error && <Text color={"red.500"} textAlign={"center"}>{error}</Text>}
+              {success && <Text color={"green.500"} textAlign={"center"}>{success}</Text>}
+              {loading && <Text color={"blue.500"} textAlign={"center"}>Please Wait...</Text>}
+
+              <Text textAlign={"center"}>Don't have an account? <Link color={"blue.500"} onClick={() => setAuthScreen('signup')}>Create Account</Link> </Text>
             </Stack>
 
           </Stack>
