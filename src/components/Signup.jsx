@@ -23,11 +23,9 @@ import { useNavigate } from 'react-router-dom'
 
 export default function SignupCard({ setAuthScreen }) {
   const [showPassword, setShowPassword] = useState(false)
-  const [error, setError] = useState("")
-  const [success, setSuccess] = useState("")
   const [loading, setLoading] = useState(false)
   const usernameRegex = /^[a-z0-9._]+$/;
-  const [user, setUser] = useRecoilState(userAtom) 
+  const [user, setUser] = useRecoilState(userAtom)
   const navigate = useNavigate()
   const toast = useToast()
 
@@ -35,12 +33,19 @@ export default function SignupCard({ setAuthScreen }) {
   const [inputs, setInputs] = useState({
     userName: '',
     email: '',
-    password: ''
+    password: '',
+    name: ''
   })
 
   const handleSignup = async () => {
-    if (!inputs.userName || !inputs.email || !inputs.password) {
-      setErrorWithTimeout("Please fill all the fields")
+    if (!inputs.userName || !inputs.email || !inputs.password || !inputs.name) {
+      toast({
+        title: "Error",
+        description: "All Fields are Required",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      })
       return
     }
 
@@ -70,8 +75,9 @@ export default function SignupCard({ setAuthScreen }) {
           isClosable: true,
         })
         localStorage.setItem("user", JSON.stringify(res.response.data))
+        setUser(res.response.data)
       }
-      navigate("/updateInfo")
+      
     } catch (error) {
       console.log(error)
     }
@@ -101,28 +107,35 @@ export default function SignupCard({ setAuthScreen }) {
             sm: "400px"
           }}>
 
+            <Flex gap={2} mb={3}>
+              <FormControl id="userName" isRequired>
+                <FormLabel>User Name</FormLabel>
+                <Input
+                  value={inputs.userName}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    // Check if the new value is valid
+                    if (usernameRegex.test(value) || value === '') {
+                      setInputs({ ...inputs, userName: value });
+                    } else {
+                      setErrorWithTimeout("Only lowercase letters, numbers, '.' and '_' are allowed for the username.");
+                    }
+                  }}
+                  type="text"
+                />
+              </FormControl>
+
+              <FormControl id="name" isRequired>
+                <FormLabel>Full Name</FormLabel>
+                <Input value={inputs.name} onChange={(e) => setInputs({ ...inputs, name: e.target.value })} type="text" />
+              </FormControl>
+            </Flex>
           <Stack spacing={4}>
             <FormControl id="email" isRequired>
               <FormLabel>Email</FormLabel>
               <Input value={inputs.email} onChange={(e) => setInputs({ ...inputs, email: e.target.value })} type="email" />
             </FormControl>
 
-            <FormControl id="email" isRequired>
-              <FormLabel>User Name</FormLabel>
-              <Input
-                value={inputs.userName}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  // Check if the new value is valid
-                  if (usernameRegex.test(value) || value === '') {
-                    setInputs({ ...inputs, userName: value });
-                  } else {
-                    setErrorWithTimeout("Only lowercase letters, numbers, '.' and '_' are allowed for the username.");
-                  }
-                }}
-                type="text"
-              />
-            </FormControl>
 
             <FormControl id="password" isRequired>
               <FormLabel>Password</FormLabel>

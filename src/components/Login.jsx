@@ -20,6 +20,7 @@ import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons'
 import { makeRequest } from '../Utils/api';
 import { userAtom } from "../Atoms/user"
 import { useRecoilState } from 'recoil';
+import { useNavigate } from 'react-router-dom';
 
 
 export default function Login({ setAuthScreen }) {
@@ -27,8 +28,6 @@ export default function Login({ setAuthScreen }) {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(null);
   const [user, setUser] = useRecoilState(userAtom);
   const toast = useToast()
 
@@ -73,6 +72,7 @@ export default function Login({ setAuthScreen }) {
           isClosable: true,
         })
         localStorage.setItem("user", JSON.stringify(res.response.data))
+        setUser(res.response.data)
       }
     } catch (error) {
       console.log(error)
@@ -144,8 +144,6 @@ export default function Login({ setAuthScreen }) {
                 Login
               </Button>
 
-              {error && <Text color={"red.500"} textAlign={"center"}>{error}</Text>}
-              {success && <Text color={"green.500"} textAlign={"center"}>{success}</Text>}
               {loading && <Text color={"blue.500"} textAlign={"center"}>Please Wait...</Text>}
 
               <Text textAlign={"center"}>Don't have an account? <Link color={"blue.500"} onClick={() => setAuthScreen('signup')}>Create Account</Link> </Text>

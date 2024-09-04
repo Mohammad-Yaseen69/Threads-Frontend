@@ -2,10 +2,11 @@ import { createRoot } from 'react-dom/client'
 import App from './App.jsx'
 import { ChakraProvider, extendTheme, ColorModeScript } from "@chakra-ui/react"
 import { mode } from "@chakra-ui/theme-tools"
-import { BrowserRouter, createRoutesFromElements, createBrowserRouter, Route, RouterProvider } from "react-router-dom"
+import { BrowserRouter, createRoutesFromElements, createBrowserRouter, Route, RouterProvider , Navigate} from "react-router-dom"
 import './index.css'
-import { PostPage, UserPage, Auth } from './Pages'
+import { PostPage, UserPage, Auth , UpdateInfo} from './Pages'
 import { RecoilRoot } from "recoil"
+
 
 const styles = {
   global: (props) => ({
@@ -34,6 +35,7 @@ const routes = createBrowserRouter(
       <Route path='/:userId' element={<UserPage />} />
       <Route path='/:userId/post/:pId' element={<PostPage />} />
       <Route path='/auth' element={<Auth />} />
+      <Route path='/updateInfo' element={<UpdateInfo />} />
     </Route>
   )
 )
