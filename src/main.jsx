@@ -32,8 +32,8 @@ const colors = {
 const routes = createBrowserRouter(
   createRoutesFromElements(
     <Route path='/' element={<App />}>
-      <Route path='/:userId' element={<UserPage />} />
-      <Route path='/:userId/post/:pId' element={<PostPage />} />
+      <Route path='/profile/:userName' element={<UserPage />} />
+      <Route path='/post/:userId/post/:pId' element={<PostPage />} />
       <Route path='/auth' element={<Auth />} />
       <Route path='/updateInfo' element={<UpdateInfo />} />
     </Route>
