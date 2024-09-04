@@ -1,3 +1,4 @@
+import { useToast } from '@chakra-ui/react'
 import {
   Flex,
   Box,
@@ -17,7 +18,7 @@ import {
 import { useState } from 'react';
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons'
 import { makeRequest } from '../Utils/api';
-import {userAtom} from "../Atoms/user"
+import { userAtom } from "../Atoms/user"
 import { useRecoilState } from 'recoil';
 
 
@@ -29,15 +30,8 @@ export default function Login({ setAuthScreen }) {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [user, setUser] = useRecoilState(userAtom);
+  const toast = useToast()
 
-  const setErrorWithTimeout = (message) => {
-    setError(message)
-    setTimeout(() => {
-      setError("")
-    }, 5000)
-  }
-
-  console.log(user)
 
   const handleLogin = async () => {
     const isEmail = identifier.includes('@');
@@ -60,11 +54,25 @@ export default function Login({ setAuthScreen }) {
 
       setLoading(false)
 
+
+
       if (res.error) {
-        setErrorWithTimeout(res.error.message)
+        toast({
+          title: "Error",
+          description: res.error.message,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        })
       } else {
-        res.response.success && setSuccess(res.response.message)
-        setUser(res.response.data)
+        res.response.success && toast({
+          title: "Success",
+          description: res.response.success,
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        })
+        localStorage.setItem("user", JSON.stringify(res.response.data))
       }
     } catch (error) {
       console.log(error)

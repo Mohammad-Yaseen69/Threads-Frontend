@@ -12,12 +12,14 @@ import {
   Text,
   useColorModeValue,
   Link,
+  useToast,
 } from '@chakra-ui/react'
 import { useState } from 'react'
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons'
 import { makeRequest } from '../Utils/api'
 import { useRecoilState } from 'recoil'
 import { userAtom } from '../Atoms/user'
+import { useNavigate } from 'react-router-dom'
 
 export default function SignupCard({ setAuthScreen }) {
   const [showPassword, setShowPassword] = useState(false)
@@ -26,19 +28,15 @@ export default function SignupCard({ setAuthScreen }) {
   const [loading, setLoading] = useState(false)
   const usernameRegex = /^[a-z0-9._]+$/;
   const [user, setUser] = useRecoilState(userAtom) 
+  const navigate = useNavigate()
+  const toast = useToast()
+
 
   const [inputs, setInputs] = useState({
     userName: '',
     email: '',
     password: ''
   })
-
-  const setErrorWithTimeout = (message) => {
-    setError(message)
-    setTimeout(() => {
-      setError("")
-    }, 5000)
-  }
 
   const handleSignup = async () => {
     if (!inputs.userName || !inputs.email || !inputs.password) {
@@ -53,13 +51,27 @@ export default function SignupCard({ setAuthScreen }) {
         data: inputs
       })
 
+      setLoading(false)
 
       if (res.error) {
-        setErrorWithTimeout(res.error.message)
+        toast({
+          title: "Error",
+          description: res.error.message,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        })
       } else {
-        res.response.success && setSuccess(res.response.message)
-        setUser(res.response.data)
+        res.response.success && toast({
+          title: "Success",
+          description: res.response.success,
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        })
+        localStorage.setItem("user", JSON.stringify(res.response.data))
       }
+      navigate("/updateInfo")
     } catch (error) {
       console.log(error)
     }
@@ -141,8 +153,6 @@ export default function SignupCard({ setAuthScreen }) {
                 Sign up
               </Button>
 
-              {error && <Text color={"red.500"} textAlign={"center"}>{error}</Text>}
-              {success && <Text color={"green.500"} textAlign={"center"}>{success}</Text>}
               {loading && <Text color={"blue.500"} textAlign={"center"}>Please Wait...</Text>}
             </Stack>
             <Stack pt={2}>
