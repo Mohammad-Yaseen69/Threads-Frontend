@@ -1,17 +1,48 @@
+import { useToast } from '@chakra-ui/react'
 import { Avatar, Box, Flex, Image, Img, Text, useColorMode } from '@chakra-ui/react'
 import { BsThreeDots } from 'react-icons/bs'
 import { Link } from 'react-router-dom'
 import { Actions } from './'
+import { useState } from 'react'
+import { makeRequest } from '../Utils/api'
+import { toastingSytex } from "../Helper/toastingSyntext"
+import { RiDeleteBin5Fill } from "react-icons/ri";
+import { useRecoilState } from 'recoil'
+import { userAtom } from '../Atoms/user'
 
-const UserPost = ({ likes, replies, postImg, postTitle , userId}) => {
+const UserPost = ({ likes, replies, postImg, postTitle, userName, userId, liked ,postId , userAvatar  ,date}) => {
     const { colorMode } = useColorMode()
+    const [likedState, setLikedState] = useState(liked);
+    const [likesState, setLikesState] = useState(likes)
+    const toast = useToast()
+    const [user] = useRecoilState(userAtom)
+
+
+    async function handleLike() {
+        setLikedState(!likedState);
+        if (likedState) {
+            setLikesState(likesState - 1);
+        } else {
+            setLikesState(likesState + 1);
+        }
+
+        const response = await makeRequest(`posts/like/${postId}`, {
+            method: "POST"
+        })
+
+        if (response.error) {
+            toastingSytex(toast, "error", "Error", response.error.message)
+        }
+
+        console.log(response.response.message)
+    }
+
     return (
         <Flex gap={3} pt={5} pb={5}>
             <Flex align={'center'} flexDirection={'column'}>
                 <Avatar
                     size={'md'}
-                    name='Mark ZuckerBerg'
-                    src='../public/zuck-avatar.png'
+                    src={userAvatar}
                     mb={2}
                 />
 
@@ -52,12 +83,12 @@ const UserPost = ({ likes, replies, postImg, postTitle , userId}) => {
             <Flex flex={1} gap={2} flexDirection={'column'}>
                 <Flex justifyContent={'space-between'}>
                     <Flex alignItems={'center'}>
-                        <Text size={'sm'} fontWeight={'bold'}  >markzuckerberg</Text>
-                        <Img src='../public/verified.png' w={4} h={4} ml={1} />
+                        <Text size={'sm'} fontWeight={'bold'}  >{userName}</Text>
                     </Flex>
                     <Flex alignItems={'center'}>
-                        <Text size={'sm'} color={'gray.light'} mr={3}>1d</Text>
-                        <BsThreeDots color={colorMode == 'dark' ? 'white' : 'gray'} cursor={'pointer'} />
+                        <Text size={'sm'} color={'gray.light'} mr={3}>{date}</Text>
+                        {/* <BsThreeDots color={colorMode == 'dark' ? 'white' : 'gray'} cursor={'pointer'} /> */}
+                       {user?._id === userId && <RiDeleteBin5Fill fontSize={'1.5rem'} color={'red'} cursor={'pointer'} />}
                     </Flex>
                 </Flex>
 
@@ -73,6 +104,7 @@ const UserPost = ({ likes, replies, postImg, postTitle , userId}) => {
                             border={'1px solid'}
                             borderColor={'gray.light'}
                             cursor={'pointer'}
+                            maxH={'500px'}
                         >
                             <Image w={'full'} src={postImg} />
                         </Box>
@@ -80,12 +112,12 @@ const UserPost = ({ likes, replies, postImg, postTitle , userId}) => {
 
                 </Link>
 
-                <Actions />
+                <Actions handleLike={handleLike} liked={likedState} />
 
                 <Flex gap={2} alignItems={'center'}>
-                    <Text color={'gray.light'} fontSize={'sm'}>100 likes</Text>
+                    <Text color={'gray.light'} fontSize={'sm'}>{likesState} likes</Text>
                     <Box w={1} h={1} bg={'gray.light'} borderRadius={'full'} ></Box>
-                    <Text color={'gray.light'} fontSize={'sm'}>144 replies</Text>
+                    <Text color={'gray.light'} fontSize={'sm'}>{replies} replies</Text>
                 </Flex>
 
             </Flex>
