@@ -1,4 +1,4 @@
-import { Textarea, useToast } from '@chakra-ui/react'
+import { Textarea, useColorMode, useToast } from '@chakra-ui/react'
 import {
   Avatar,
   Box,
@@ -9,7 +9,6 @@ import {
   Input,
   Stack,
   Text,
-  useColorModeValue,
 } from '@chakra-ui/react'
 import React, { useEffect, useRef, useState } from 'react'
 import { useRecoilState } from 'recoil'
@@ -24,6 +23,7 @@ const UpdateDetails = () => {
   const fileInputRef = useRef(null)
   const [user, setUser] = useRecoilState(userAtom)
   const toast = useToast()
+  const {colorMode} = useColorMode()
   const [pfpFile, setPfpFile] = useState(null)
 
   useEffect(() => {
@@ -114,7 +114,7 @@ const UpdateDetails = () => {
 
       <Box
         rounded={'lg'}
-        bg={'gray.dark'}
+        bg={colorMode == "dark" ? "gray.dark" : "gray.100"}
         boxShadow={'lg'}
         p={6}
         w={{
