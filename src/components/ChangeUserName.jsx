@@ -21,8 +21,6 @@ const ChangeUserN = () => {
     const toast = useToast()
     const { colorMode } = useColorMode()
 
-    console.log(user.userName)
-
     useEffect(() => {
         if (user) {
             setUserName(user.userName)
@@ -48,7 +46,6 @@ const ChangeUserN = () => {
             data: { userName }
         })
 
-        console.log(response)
         if(response.error){
             toast({
                 title: "Error",

@@ -15,7 +15,7 @@ const Header = () => {
     const navigate = useNavigate()
 
     return (
-        <Flex position={"relative"} justifyContent={'space-between'} alignItems={"center"} mt={6} mb={12}>
+        <Flex position={"relative"} justifyContent={user ? 'space-between' : 'center'} alignItems={"center"} mt={6} mb={12}>
             {user && <IoHome onClick={() => navigate("/")} cursor={'pointer'} fontSize={30} color={colorMode == "dark" ? "white" : "black"} />}
             <Image
                 src={colorMode === "light" ? "/dark-logo.svg" : "/light-logo.svg"}
@@ -24,11 +24,16 @@ const Header = () => {
                 alt='logo'
                 onClick={toggleColorMode}
                 cursor={"pointer"}
+                position={'relative'}
+                left={{
+                    base: '0',
+                    sm: user ? '50px' : '0',
+                }}
             />
 
             <Flex alignItems={"center"} gap={2}>
                 {user && <IoIosSettings onClick={() => navigate("/updateInfo")} cursor={'pointer'} fontSize={30} color={colorMode == "dark" ? "white" : "black"} />}
-                {user && <CgProfile  onClick={() => navigate(`/profile/${user.userName}`)} cursor={'pointer'} fontSize={30} color={colorMode == "dark" ? "white" : "black"} />}
+                {user && <CgProfile onClick={() => navigate(`/profile/${user.userName}`)} cursor={'pointer'} fontSize={30} color={colorMode == "dark" ? "white" : "black"} />}
                 {user && <IoChatbubbleEllipsesSharp cursor={'pointer'} fontSize={30} color={colorMode == "dark" ? "white" : "black"} />}
                 {user && <LogoutBtn />}
             </Flex>

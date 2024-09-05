@@ -13,7 +13,8 @@ const UserHeader = ({
     instagram,
     avatar,
     followed,
-    userId
+    userId,
+    sameUser
 }) => {
     const toast = useToast()
     const [activeTab, setActiveTab] = useState('threads')
@@ -21,8 +22,6 @@ const UserHeader = ({
     const [followedState, setFollowedState] = useState(followed)
     const [followerState, setFollowerState] = useState(followers)
     const [followFormat, setFollowFormat] = useState("")
-
-    console.log(followedState)
 
     useEffect(() => {
         setFollowedState(followed)
@@ -34,11 +33,9 @@ const UserHeader = ({
 
 
 
-    console.log(userId)
     useEffect(() => {
         const changeFollowersFormat = () => {
             if (followerState > 1000000) {
-                console.log("million")
                 setFollowFormat((followerState / 1000000).toFixed(1) + 'm')
             }
             // write this function for changing followers formats to numbers to "k" "m"
@@ -112,7 +109,6 @@ const UserHeader = ({
 
                 <Box>
                     <Avatar
-                        name={fullName}
                         src={avatar}
                         size={"xl"}
                     />
@@ -128,9 +124,11 @@ const UserHeader = ({
             }} gap={3} justifyContent={'space-between'} w={'full'}>
                 <Flex alignItems={'center'} gap={2}>
                     <Text color={'gray.light'}>{followFormat} followers</Text>
-                    <Button _hover={!followedState && "blue.600"} onClick={handleFollow} backgroundColor={!followedState && "blue.700"}>
-                        {followedState ? "Unfollow" : "Follow"}
-                    </Button>
+                    {!sameUser &&
+                        <Button _hover={!followedState && "blue.600"} onClick={handleFollow} backgroundColor={!followedState && "blue.700"}>
+                            {followedState ? "Unfollow" : "Follow"}
+                        </Button>
+                    }
                 </Flex>
 
                 <Flex alignItems={'center'}>

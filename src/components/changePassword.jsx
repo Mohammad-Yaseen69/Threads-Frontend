@@ -24,8 +24,6 @@ const ChangePass = () => {
     const toast = useToast()
     const { colorMode } = useColorMode()
 
-    console.log(user.userName)
-
 
     const handleUpdate = async () => {
         if (!inputs.oldPassword) {
@@ -53,8 +51,7 @@ const ChangePass = () => {
             method: "POST",
             data: inputs
         })
-
-        console.log(response)
+        
         if(response.error){
             toast({
                 title: "Error",

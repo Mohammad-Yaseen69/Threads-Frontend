@@ -35,8 +35,6 @@ const UpdateDetails = () => {
     }
   }, [user])
 
-  console.log(pfpFile)
-
   const handleFileChange = (event) => {
     const file = event.target.files[0]
     setPfpFile(file)
@@ -75,10 +73,6 @@ const UpdateDetails = () => {
     bio && formData.append('bio', bio) // Corrected this line
     instagram && formData.append('instagram', instagram) // Appending Instagram URL
     pfpFile && formData.append('pfp', pfpFile)
-
-    for (const key of formData.entries()) {
-      console.log(key)
-    }
 
     const response = await makeRequest("users/add", {
       method: "POST",
@@ -137,7 +131,6 @@ const UpdateDetails = () => {
             <Flex align="center" justify="center">
               <Avatar
                 size="xl"
-                name={name || 'User'}
                 src={pfp}
                 cursor="pointer"
                 onClick={() => fileInputRef.current.click()}

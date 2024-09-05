@@ -27,17 +27,10 @@ const UserPage = () => {
             }else{
                 setUser(response.response.data[0])
             }
-
-            console.log(response)
         }
 
         getUserProfile()
     }, [userName])
-
-
-
-    console.log(user)
-
 
     return (
         <div>
@@ -49,7 +42,8 @@ const UserPage = () => {
                 instagram = {user?.instagram}
                 followers = {user?.followersCount}    
                 followed={user?.followed} 
-                userId={user?._id}          
+                userId={user?._id}       
+                sameUser={user?._id === loggedinUser?._id}   
             />
 
             <UserPost userId={user?._id} likes='1221' replies='122' postImg='/post1.png' postTitle="this is first post" />
