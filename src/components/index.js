@@ -8,3 +8,4 @@ export {default as Signup} from "./Signup"
 export {default as UpdateDetails} from "./UpdateDetails"
 export {default as LogoutBtn} from "./LogoutBtn"
 export {default as ChangeUserName} from './ChangeUserName'
+export {default as ChangePass} from './changePassword'

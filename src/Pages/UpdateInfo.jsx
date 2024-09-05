@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { UpdateDetails, ChangeUserName } from "../components"
+import { UpdateDetails, ChangeUserName, ChangePass } from "../components"
 import { useRecoilState } from "recoil"
 import { userAtom } from "../Atoms/user"
 import { useNavigate } from "react-router-dom"
@@ -20,6 +20,7 @@ const UpdateInfo = () => {
     }, [])
     return (
         <div style={{ width: '100%' }}>
+            <Text fontSize={'2xl'} fontWeight={'bold'} mb={3} textAlign={'center'}>Update Profile</Text>
             <Flex w='full' mb={3}>
                 <Flex
                     flex={1}
@@ -29,18 +30,24 @@ const UpdateInfo = () => {
                     onClick={() => setActiveTab('info')}
                     transition={'all 0.3s'}
                 >
-                    <Text fontWeight={'bold'} color={activeTab == 'info' ? colorMode == 'dark' ? 'white' : 'gray.dark' : 'gray.light'}>Update Info</Text>
+                    <Text fontSize={{
+                        base: 'xs',
+                        sm: 'md'
+                    }}  fontWeight={'bold'} color={activeTab == 'info' ? colorMode == 'dark' ? 'white' : 'gray.dark' : 'gray.light'}>Info</Text>
                 </Flex>
                 <Flex
                     flex={1}
                     borderBottom={activeTab == 'pass' ? colorMode == 'dark' ? '1.5px solid white' : '2px solid black' : '1px solid gray'}
                     justifyContent={'center'}
-                    pb='3'
+                    pb={'3'}
                     cursor={'pointer'}
                     onClick={() => setActiveTab('pass')}
                     transition={'all 0.3s'}
                 >
-                    <Text fontWeight={'bold'} color={activeTab == 'pass' ? colorMode == 'dark' ? 'white' : 'gray.dark' : 'gray.light'}>Change Password</Text>
+                    <Text fontSize={{
+                        base: 'xs',
+                        sm: 'md'
+                    }}  fontWeight={'bold'} color={activeTab == 'pass' ? colorMode == 'dark' ? 'white' : 'gray.dark' : 'gray.light'} >Password</Text>
                 </Flex>
                 <Flex
                     flex={1}
@@ -51,11 +58,19 @@ const UpdateInfo = () => {
                     onClick={() => setActiveTab('userN')}
                     transition={'all 0.3s'}
                 >
-                    <Text fontWeight={'bold'} color={activeTab == 'userN' ? colorMode == 'dark' ? 'white' : 'gray.dark' : 'gray.light'}>Change User name</Text>
+                    <Text
+                        fontWeight={'bold'}
+                        fontSize={{
+                            base: 'xs',
+                            sm: 'md'
+                        }}
+                        textAlign={"center"}
+                        color={activeTab == 'userN' ? colorMode == 'dark' ? 'white' : 'gray.dark' : 'gray.light'}
+                    >User Name</Text>
                 </Flex>
             </Flex>
             {activeTab == 'info' && <UpdateDetails />}
-            {/* {activeTab == 'pass' && <ChangePassword />} */}
+            {activeTab == 'pass' && <ChangePass />}
             {activeTab == 'userN' && <ChangeUserName />}
         </div>
     )

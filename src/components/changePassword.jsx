@@ -10,32 +10,38 @@ import {
     Stack,
     Text,
 } from '@chakra-ui/react'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useRecoilState } from 'recoil'
 import { userAtom } from '../Atoms/user'
 import { makeRequest } from '../Utils/api'
 
-const ChangeUserN = () => {
-    const [userName, setUserName] = useState('')
+const ChangePass = () => {
+    const [inputs, setInputs] = useState({
+        oldPassword: "",
+        newPassword: "",
+    })
     const [user, setUser] = useRecoilState(userAtom)
     const toast = useToast()
     const { colorMode } = useColorMode()
 
     console.log(user.userName)
 
-    useEffect(() => {
-        if (user) {
-            setUserName(user.userName)
-        }
-    }, [user])
-
-
 
     const handleUpdate = async () => {
-        if (!userName) {
+        if (!inputs.oldPassword) {
             toast({
                 title: "Error",
-                description: "User Name can't be Empty",
+                description: "Please Provide Old Password",
+                status: "error",
+                duration: 3000,
+                isClosable: true,
+            })
+            return
+        }
+        if (!inputs.newPassword) {
+            toast({
+                title: "Error",
+                description: "Please Provide New Password",
                 status: "error",
                 duration: 3000,
                 isClosable: true,
@@ -43,9 +49,9 @@ const ChangeUserN = () => {
             return
         }
 
-        const response = await makeRequest("users/changeUserName", {
+        const response = await makeRequest("users/changePassword", {
             method: "POST",
-            data: { userName }
+            data: inputs
         })
 
         console.log(response)
@@ -95,12 +101,21 @@ return (
             <Stack spacing={4}>
 
                 <FormControl id="instagram" isRequired>
-                    <FormLabel>Change User Name</FormLabel>
+                    <FormLabel>Old Password</FormLabel>
                     <Input
-                        value={userName}
-                        onChange={(e) => setUserName(e.target.value)}
+                        value={inputs.oldPassword}
+                        onChange={(e) => setInputs((prev) => ({...prev, oldPassword: e.target.value}))}
                         type="text"
-                        placeholder="Your User Name"
+                        placeholder="Your Old Password"
+                    />
+                </FormControl>
+                <FormControl id="instagram" isRequired>
+                    <FormLabel>New Password</FormLabel>
+                    <Input
+                        value={inputs.newPassword}
+                        onChange={(e) => setInputs((prev) => ({...prev, newPassword: e.target.value}))}
+                        type="text"
+                        placeholder="Your New Password"
                     />
                 </FormControl>
 
@@ -116,7 +131,7 @@ return (
                             bg: 'blue.500',
                         }}
                     >
-                        Change User Name
+                        Change Password
                     </Button>
                 </Stack>
             </Stack>
@@ -125,4 +140,4 @@ return (
 )
 }
 
-export default ChangeUserN
+export default ChangePass
