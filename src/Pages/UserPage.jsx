@@ -37,28 +37,28 @@ const UserPage = () => {
     const getRelativeTime = (date) => {
         const now = new Date();
         const diffInSeconds = Math.floor((now - date) / 1000); // Difference in seconds
-      
+
         // Define the time units and their corresponding seconds
         const timeIntervals = {
-          year: 31536000,  // 365 * 24 * 60 * 60
-          month: 2592000,  // 30 * 24 * 60 * 60
-          week: 604800,    // 7 * 24 * 60 * 60
-          day: 86400,      // 24 * 60 * 60
-          hour: 3600,      // 60 * 60
-          minute: 60,
-          second: 1
+            year: 31536000,  // 365 * 24 * 60 * 60
+            month: 2592000,  // 30 * 24 * 60 * 60
+            week: 604800,    // 7 * 24 * 60 * 60
+            day: 86400,      // 24 * 60 * 60
+            hour: 3600,      // 60 * 60
+            minute: 60,
+            second: 1
         };
-      
+
         for (const [unit, secondsInUnit] of Object.entries(timeIntervals)) {
-          const interval = Math.floor(diffInSeconds / secondsInUnit);
-      
-          if (interval >= 1) {
-            return new Intl.RelativeTimeFormat('en', { numeric: 'auto' }).format(-interval, unit);
-          }
+            const interval = Math.floor(diffInSeconds / secondsInUnit);
+
+            if (interval >= 1) {
+                return new Intl.RelativeTimeFormat('en', { numeric: 'auto' }).format(-interval, unit);
+            }
         }
-      
+
         return "just now"; // If less than a second
-      };
+    };
 
     return (
         <div style={{ marginBottom: "10px" }}>
@@ -79,11 +79,13 @@ const UserPage = () => {
                 const liked = post?.likes.includes(loggedinUser?._id)
                 const replyCount = post?.replies.length
                 const relativeTime = getRelativeTime(new Date(post?.createdAt))
-                const repliesUser = post?.replies?.slice(0, 2)
+                const repliesUser = post?.replies?.slice(0, 3)
+
 
                 return (
                     <>
                         <UserPost
+                            key={post?._id}
                             userId={user?._id}
                             likes={likeCount}
                             replies={replyCount}
@@ -94,6 +96,7 @@ const UserPage = () => {
                             date={relativeTime}
                             userAvatar={post?.postedBy?.pfp?.url}
                             userName={post?.postedBy?.userName}
+                            repliesUser={repliesUser}
                         />
                     </>
                 )

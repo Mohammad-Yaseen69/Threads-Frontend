@@ -10,13 +10,14 @@ import { RiDeleteBin5Fill } from "react-icons/ri";
 import { useRecoilState } from 'recoil'
 import { userAtom } from '../Atoms/user'
 
-const UserPost = ({ likes, replies, postImg, postTitle, userName, userId, liked ,postId , userAvatar  ,date}) => {
+const UserPost = ({ likes, replies, postImg, postTitle, userName, userId, liked, postId, userAvatar, date, repliesUser }) => {
     const { colorMode } = useColorMode()
     const [likedState, setLikedState] = useState(liked);
     const [likesState, setLikesState] = useState(likes)
     const toast = useToast()
     const [user] = useRecoilState(userAtom)
 
+    console.log(repliesUser)
 
     async function handleLike() {
         setLikedState(!likedState);
@@ -49,33 +50,38 @@ const UserPost = ({ likes, replies, postImg, postTitle, userName, userId, liked 
                 <Box style={{ width: '1px' }} h={'full'} bg={'gray.light'}></Box>
 
                 <Box position={"relative"} w={"full"}>
-                    <Avatar
-                        size='xs'
-                        name='John doe'
-                        src='https://bit.ly/dan-abramov'
-                        position={"absolute"}
-                        top={"0px"}
-                        left='15px'
-                        padding={"2px"}
-                    />
-                    <Avatar
-                        size='xs'
-                        name='John doe'
-                        src='https://bit.ly/sage-adebayo'
-                        position={"absolute"}
-                        bottom={"0px"}
-                        right='-5px'
-                        padding={"2px"}
-                    />
-                    <Avatar
-                        size='xs'
-                        name='John doe'
-                        src='https://bit.ly/prosper-baba'
-                        position={"absolute"}
-                        bottom={"0px"}
-                        left='4px'
-                        padding={"2px"}
-                    />
+
+                    {repliesUser && (
+                        <>
+                            <Avatar
+                                size='xs'
+                                src={repliesUser[0].pfp}
+                                position={"absolute"}
+                                top={"0px"}
+                                left='15px'
+                                padding={"2px"}
+                            />
+
+
+                            {repliesUser[1]?.pfp && <Avatar
+                                size='xs'
+                                src={repliesUser[1]?.pfp}
+                                position={"absolute"}
+                                bottom={"0px"}
+                                right='-5px'
+                                padding={"2px"}
+                            />}
+
+                           {repliesUser[2]?.pfp && <Avatar
+                                size='xs'
+                                src={repliesUser[2]?.pfp}
+                                position={"absolute"}
+                                bottom={"0px"}
+                                left='4px'
+                                padding={"2px"}
+                            />}
+                        </>
+                    )}
                 </Box>
             </Flex>
 
@@ -88,7 +94,7 @@ const UserPost = ({ likes, replies, postImg, postTitle, userName, userId, liked 
                     <Flex alignItems={'center'}>
                         <Text size={'sm'} color={'gray.light'} mr={3}>{date}</Text>
                         {/* <BsThreeDots color={colorMode == 'dark' ? 'white' : 'gray'} cursor={'pointer'} /> */}
-                       {user?._id === userId && <RiDeleteBin5Fill fontSize={'1.5rem'} color={'red'} cursor={'pointer'} />}
+                        {user?._id === userId && <RiDeleteBin5Fill fontSize={'1.5rem'} color={'red'} cursor={'pointer'} />}
                     </Flex>
                 </Flex>
 
@@ -104,6 +110,11 @@ const UserPost = ({ likes, replies, postImg, postTitle, userName, userId, liked 
                             border={'1px solid'}
                             borderColor={'gray.light'}
                             cursor={'pointer'}
+
+
+
+
+
                             maxH={'500px'}
                         >
                             <Image w={'full'} src={postImg} />
