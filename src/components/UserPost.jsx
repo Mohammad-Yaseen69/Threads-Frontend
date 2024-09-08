@@ -1,4 +1,4 @@
-import { useToast } from '@chakra-ui/react'
+import { Button, useToast } from '@chakra-ui/react'
 import { Avatar, Box, Flex, Image, Img, Text, useColorMode } from '@chakra-ui/react'
 import { BsThreeDots } from 'react-icons/bs'
 import { Link } from 'react-router-dom'
@@ -16,6 +16,7 @@ const UserPost = ({ likes, replies, postImg, postTitle, userName, userId, liked,
     const [likesState, setLikesState] = useState(likes)
     const toast = useToast()
     const [user] = useRecoilState(userAtom)
+    const [loading, Setloading] = useState(false)
 
     console.log(repliesUser)
 
@@ -55,7 +56,7 @@ const UserPost = ({ likes, replies, postImg, postTitle, userName, userId, liked,
                         <>
                             <Avatar
                                 size='xs'
-                                src={repliesUser[0].pfp}
+                                src={repliesUser[0]?.pfp}
                                 position={"absolute"}
                                 top={"0px"}
                                 left='15px'
@@ -72,7 +73,7 @@ const UserPost = ({ likes, replies, postImg, postTitle, userName, userId, liked,
                                 padding={"2px"}
                             />}
 
-                           {repliesUser[2]?.pfp && <Avatar
+                            {repliesUser[2]?.pfp && <Avatar
                                 size='xs'
                                 src={repliesUser[2]?.pfp}
                                 position={"absolute"}
@@ -89,16 +90,23 @@ const UserPost = ({ likes, replies, postImg, postTitle, userName, userId, liked,
             <Flex flex={1} gap={2} flexDirection={'column'}>
                 <Flex justifyContent={'space-between'}>
                     <Flex alignItems={'center'}>
-                        <Text size={'sm'} fontWeight={'bold'}  >{userName}</Text>
+                        <Link to={`/profile/${userName}`} ><Text size={'sm'} fontWeight={'bold'}  >{userName}</Text></Link>
                     </Flex>
                     <Flex alignItems={'center'}>
                         <Text size={'sm'} color={'gray.light'} mr={3}>{date}</Text>
                         {/* <BsThreeDots color={colorMode == 'dark' ? 'white' : 'gray'} cursor={'pointer'} /> */}
-                        {user?._id === userId && <RiDeleteBin5Fill fontSize={'1.5rem'} color={'red'} cursor={'pointer'} />}
+
+
+
+                        {user?._id === userId &&
+                            <Button padding={0}>
+                                <RiDeleteBin5Fill fontSize={'1.5rem'} color={'red'} cursor={'pointer'} />
+                            </Button>
+                        }
                     </Flex>
                 </Flex>
 
-                <Link to={`/${userId}/post/12121`}>
+                <Link to={`/post/${postId}`}>
                     <Text fontSize={'md'} mb={3}>{postTitle}</Text>
 
 
@@ -110,11 +118,6 @@ const UserPost = ({ likes, replies, postImg, postTitle, userName, userId, liked,
                             border={'1px solid'}
                             borderColor={'gray.light'}
                             cursor={'pointer'}
-
-
-
-
-
                             maxH={'500px'}
                         >
                             <Image w={'full'} src={postImg} />

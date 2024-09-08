@@ -22,6 +22,7 @@ const UserHeader = ({
     const [followedState, setFollowedState] = useState(followed)
     const [followerState, setFollowerState] = useState(followers)
     const [followFormat, setFollowFormat] = useState("")
+    const [loading , setLoading] = useState(false)
 
     useEffect(() => {
         setFollowedState(followed)
@@ -58,6 +59,7 @@ const UserHeader = ({
             setFollowerState(followerState + 1)
         }
 
+        setLoading(true)
         const response = await makeRequest(`users/follow/${userId}`, {
             method: "POST"
         })
@@ -79,6 +81,7 @@ const UserHeader = ({
                 duration: 3000,
                 isClosable: true,
             })
+            setLoading(false)
         }
     }
 
@@ -125,7 +128,7 @@ const UserHeader = ({
                 <Flex alignItems={'center'} gap={2}>
                     <Text color={'gray.light'}>{followFormat} followers</Text>
                     {!sameUser &&
-                        <Button _hover={!followedState && "blue.600"} onClick={handleFollow} backgroundColor={!followedState && "blue.700"}>
+                        <Button isLoading={loading} _hover={!followedState && "blue.600"} onClick={handleFollow} backgroundColor={!followedState && "blue.700"}>
                             {followedState ? "Unfollow" : "Follow"}
                         </Button>
                     }
