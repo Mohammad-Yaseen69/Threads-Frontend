@@ -1,43 +1,174 @@
-import React from 'react'
-import { useParams } from 'react-router-dom'
-import { Avatar, Box, Button, Divider, Flex, Image, Img, Text, useColorMode } from '@chakra-ui/react'
+import { useState } from 'react'
+import React, { useEffect } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
+import { Avatar, Box, Button, Divider, Flex, Image, Img, Input, Text, useColorMode, useToast } from '@chakra-ui/react'
 import { BsThreeDots } from 'react-icons/bs'
 import { Link } from 'react-router-dom'
 import { Actions, Comment } from '../components'
+import { makeRequest } from '../Utils/api'
+import { RiDeleteBin5Fill } from "react-icons/ri";
+import { useRecoilState } from 'recoil'
+import { userAtom } from '../Atoms/user'
+import { toastingSytex } from '../Helper/toastingSyntext'
 
 
 
 const PostPage = () => {
-    const { userId, pId } = useParams()
-    const { colorMode } = useColorMode()
+    const { postId } = useParams()
+    const [post, setPost] = useState(null)
+    const [date, setDate] = useState(null)
+    const [liked, setLiked] = useState(null)
+    const [likesCount, setLikesCount] = useState(null)
+    const [repliesCount, setRepliesCount] = useState(null)
+    const [user] = useRecoilState(userAtom)
+    const [comment, setComment] = useState('')
+    const [comments, setComments] = useState([])
+    const [loading, setLoading] = useState(false)
+    const toast = useToast()
+    const navigate = useNavigate()
+
+    const getRelativeTime = (date) => {
+        const now = new Date();
+        const diffInSeconds = Math.floor((now - date) / 1000); // Difference in seconds
+
+        // Define the time units and their corresponding seconds
+        const timeIntervals = {
+            year: 31536000,  // 365 * 24 * 60 * 60
+            month: 2592000,  // 30 * 24 * 60 * 60
+            week: 604800,    // 7 * 24 * 60 * 60
+            day: 86400,      // 24 * 60 * 60
+            hour: 3600,      // 60 * 60
+            minute: 60,
+            second: 1
+        };
+
+        for (const [unit, secondsInUnit] of Object.entries(timeIntervals)) {
+            const interval = Math.floor(diffInSeconds / secondsInUnit);
+
+            if (interval >= 1) {
+                return new Intl.RelativeTimeFormat('en', { numeric: 'auto' }).format(-interval, unit);
+            }
+        }
 
 
-    const postTitle = 'This is a sample post title'
-    const postImg = '/post1.png'
+
+        return "just now"; // If less than a second
+    };
+
+
+    useEffect(() => {
+
+
+        async function getPost() {
+            const response = await makeRequest(`posts/${postId}`)
+
+            if (response.error) {
+                console.log(response.error)
+            }
+
+            if (response.response.data[0]) {
+                setPost(response.response.data[0])
+                setDate(getRelativeTime(new Date(response.response.data[0].createdAt)))
+                setLikesCount(response.response.data[0].likesCount)
+                setRepliesCount(response.response.data[0].repliesCount)
+                setLiked(response.response.data[0].likedByMe)
+                setComments(response.response.data[0].replies)
+            }
+
+
+        }
+
+        getPost()
+    }, [])
+
+    const handleDeletePost = async () => {
+        setLoading(true)
+        const response = await makeRequest(`posts/delete/${postId}`, {
+            method: "DELETE"
+        })
+
+        if (response.response) {
+            setLoading(false)
+            navigate('/')
+        }
+    }
+
+    const handleLike = async () => {
+        if (liked) {
+            setLiked(false)
+            setLikesCount(likesCount - 1)
+        } else {
+            setLiked(true)
+            setLikesCount(likesCount + 1)
+        }
+
+        const response = await makeRequest(`posts/like/${postId}`, {
+            method: "POST"
+        })
+    }
 
 
 
+    const handleAddComment = async (e) => {
+        e.preventDefault();
+
+        if (comment.trim()) {
+            const response = await makeRequest(`posts/reply/${postId}`, {
+                method: "POST",
+                data: { text: comment }
+            });
+
+            if (response.error) {
+                toastingSytex(toast, 'error', response.error.message);
+            } else if (response.response) {
+                // Use the spread operator to add the new comment without mutating the state
+                setComments([response.response.data, ...comments]);
+                setComment('');  // Clear the input after successful submission
+            }
+        }
+    };
+
+    const deleteComment = async (commentId, setloading, loading) => {
+        setloading(true)
+        const response = await makeRequest(`posts/reply/${postId}/${commentId}`, {
+            method: "DELETE"
+        });
+
+        if (response.response) {
+            setloading(false)
+            // Filter out the deleted comment
+            setComments(comments.filter((comment) => comment._id !== commentId));
+        }
+    };
+
+    console.log(post)
 
     return (
         <Flex flexDirection={'column'}>
             <Flex flex={1} gap={2} flexDirection={'column'}>
                 <Flex justifyContent={'space-between'}>
-                    <Flex alignItems={'center'}>
-                        <Text size={'sm'} fontWeight={'bold'}  >markzuckerberg</Text>
-                        <Img src='/verified.png' w={4} h={4} ml={1} />
+                    <Flex alignItems={'center'} gap={3}>
+                        <Avatar size={'md'}  src={post?.postedBy[0]?.pfp?.url} />
+                        <Link to={`/profile/${post?.postedBy[0]?.userName}`}>
+                            <Text size={'sm'} fontWeight={'bold'}  >{post?.postedBy[0]?.userName}</Text>
+                        </Link>
                     </Flex>
                     <Flex alignItems={'center'}>
-                        <Text size={'sm'} color={'gray.light'} mr={3}>1d</Text>
-                        <BsThreeDots color={colorMode == 'dark' ? 'white' : 'gray'} cursor={'pointer'} />
+                        <Text size={'sm'} color={'gray.light'} mr={3}>{date}</Text>
+                        {user?._id === post?.postedBy[0]._id &&
+                            <Button isLoading={loading} onClick={handleDeletePost} padding={0}>
+                                <RiDeleteBin5Fill fontSize={'1.5rem'} color={'red'} cursor={'pointer'} />
+                            </Button>
+                        }
                     </Flex>
                 </Flex>
 
                 <Link>
-                    <Text fontSize={'md'} mb={3}>{postTitle}</Text>
+                    <Text fontSize={'md'} mb={3}>{post?.postTitle}</Text>
 
 
 
-                    {postImg &&
+                    {post?.postImg &&
                         <Box
                             borderRadius={4}
                             overflow={'hidden'}
@@ -45,18 +176,18 @@ const PostPage = () => {
                             borderColor={'gray.light'}
                             cursor={'pointer'}
                         >
-                            <Image w={'full'} src={postImg} />
+                            <Image w={'full'} src={post?.postImg?.url} />
                         </Box>
                     }
 
                 </Link>
 
-                <Actions />
+                <Actions handleLike={handleLike} liked={liked} />
 
                 <Flex gap={2} alignItems={'center'}>
-                    <Text color={'gray.light'} fontSize={'sm'}>100 likes</Text>
+                    <Text color={'gray.light'} fontSize={'sm'}>{likesCount} likes</Text>
                     <Box w={1} h={1} bg={'gray.light'} borderRadius={'full'} ></Box>
-                    <Text color={'gray.light'} fontSize={'sm'}>144 replies</Text>
+                    <Text color={'gray.light'} fontSize={'sm'}>{repliesCount} replies</Text>
                 </Flex>
 
             </Flex>
@@ -65,44 +196,37 @@ const PostPage = () => {
             <Divider my={4} />
 
 
-            <Flex justifyContent={'space-between'} alignItems={'center'}>
-                <Flex alignItems={'center'} >
-                    <Text fontSize={'2xl'}>👋</Text>
-                    <Text fontSize={'md'} color={'gray.light'}>Get the app to like reply and post.</Text>
-                </Flex>
+            {/* ADD Comment Field */}
 
-                <Button>
-                    Get
+            <Flex as="form" onSubmit={handleAddComment} gap={3} flexDirection={'row'} mb={4}>
+                <Flex flex={4} gap={2}>
+                    <Avatar name={user?.userName} src={user?.pfp?.url} />
+                    <Input
+
+                        placeholder="Write a comment..."
+                        value={comment}
+                        onChange={(e) => setComment(e.target.value)}
+                        required
+                    />
+                </Flex>
+                <Button flex={1} type="submit" disabled={!comment?.trim()}>
+                    Post
                 </Button>
             </Flex>
-
             <Divider my={4}></Divider>
 
 
-            <Comment
-                commentText={'This is a sample comment'}
-                createdAt={'2d'}
-                likes={1}
-                userName={'johndoe'}
-                pfp='https://bit.ly/dan-abramov'
-            />
-          
-            <Comment
-                commentText={'This is a second comment'}
-                createdAt={'6d'}
-                likes={102}
-                userName={'markwik'}
-                pfp='https://bit.ly/dan-abramov'
-            />
-          
-            <Comment
-                commentText={'This is a third comment'}
-                createdAt={'1w'}
-                likes={1012}
-                userName={'darinnunez'}
-                pfp='https://bit.ly/dan-abramov'
-            />
-          
+
+            {comments?.map((reply) => [
+                <Comment
+                    reply={reply}
+                    key={reply._id}
+                    createdAt={getRelativeTime(new Date(reply?.createdAt))}
+                    postId={postId}
+                    handleDelete={deleteComment}
+                />
+            ])}
+
         </Flex>
     )
 }

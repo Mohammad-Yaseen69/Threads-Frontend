@@ -33,7 +33,7 @@ const routes = createBrowserRouter(
   createRoutesFromElements(
     <Route path='/' element={<App />}>
       <Route path='/profile/:userName' element={<UserPage />} />
-      <Route path='/post/:userId/post/:pId' element={<PostPage />} />
+      <Route path='/post/:postId' element={<PostPage />} />
       <Route path='/auth' element={<Auth />} />
       <Route path='/updateInfo' element={<UpdateInfo />} />
     </Route>
