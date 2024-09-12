@@ -144,8 +144,6 @@ const PostPage = () => {
         }
     };
 
-    console.log(post)
-
    
 
     return !pageLoading ?
@@ -181,7 +179,7 @@ const PostPage = () => {
                             borderColor={'gray.light'}
                             cursor={'pointer'}
                         >
-                            <Image w={'full'} src={post?.postImg?.url} />
+                            <Image width={'full'} objectFit={'contain'} src={post?.postImg?.url} />
                         </Box>
                     }
 

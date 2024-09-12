@@ -53,8 +53,7 @@ const Home = () => {
         return "just now"; // If less than a second
     };
 
-    console.log(posts)
-
+    
     return (
         <div>
             <Stack>
@@ -69,13 +68,12 @@ const Home = () => {
                         const replyCount = post?.replies.length
                         const relativeTime = getRelativeTime(new Date(post?.createdAt))
                         const repliesUser = post?.replies?.slice(0, 3)
-                        console.log(post.user[0].userName)
-
+                        
                         return (
                             <>
                                 <Post
                                     key={post?._id}
-                                    userId={loggedinUser?._id}
+                                    userId={post?.user[0]._id}
                                     likes={likeCount}
                                     replies={replyCount}
                                     postImg={post.postImg?.url}

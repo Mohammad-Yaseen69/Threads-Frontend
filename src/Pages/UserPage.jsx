@@ -39,7 +39,6 @@ const UserPage = () => {
         getUserProfile()
     }, [userName])
 
-    console.log(user)
 
     const getRelativeTime = (date) => {
         const now = new Date();

@@ -17,7 +17,7 @@ const UserHeader = ({
     sameUser
 }) => {
     const toast = useToast()
-    const [activeTab, setActiveTab] = useState('threads')
+    const [activeTab, setActiveTab] = useState('posts')
     const { colorMode } = useColorMode()
     const [followedState, setFollowedState] = useState(followed)
     const [followerState, setFollowerState] = useState(followers)
@@ -162,24 +162,13 @@ const UserHeader = ({
             <Flex w='full'>
                 <Flex
                     flex={1}
-                    borderBottom={activeTab == 'threads' ? colorMode == 'dark' ? '1.5px solid white' : '2px solid black' : '1px solid gray'}
+                    borderBottom={activeTab == 'posts' ? colorMode == 'dark' ? '1.5px solid white' : '2px solid black' : '1px solid gray'}
                     justifyContent={'center'} pb='3'
                     cursor={'pointer'}
-                    onClick={() => setActiveTab('threads')}
+                    onClick={() => setActiveTab('posts')}
                     transition={'all 0.3s'}
                 >
-                    <Text fontWeight={'bold'} color={activeTab == 'threads' ? colorMode == 'dark' ? 'white' : 'gray.dark' : 'gray.light'}>Threads</Text>
-                </Flex>
-                <Flex
-                    flex={1}
-                    borderBottom={activeTab == 'replies' ? colorMode == 'dark' ? '1.5px solid white' : '2px solid black' : '1px solid gray'}
-                    justifyContent={'center'}
-                    pb='3'
-                    cursor={'pointer'}
-                    onClick={() => setActiveTab('replies')}
-                    transition={'all 0.3s'}
-                >
-                    <Text fontWeight={'bold'} color={activeTab == 'replies' ? colorMode == 'dark' ? 'white' : 'gray.dark' : 'gray.light'}>Replies</Text>
+                    <Text fontWeight={'bold'} color={activeTab == 'posts' ? colorMode == 'dark' ? 'white' : 'gray.dark' : 'gray.light'}>Posts</Text>
                 </Flex>
             </Flex>
         </VStack>
