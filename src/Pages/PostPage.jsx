@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import React, { useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { Avatar, Box, Button, Divider, Flex, Image, Img, Input, Text, useColorMode, useToast } from '@chakra-ui/react'
+import { Avatar, Box, Button, Divider, Flex, Image, Img, Input, Spinner, Text, useColorMode, useToast } from '@chakra-ui/react'
 import { BsThreeDots } from 'react-icons/bs'
 import { Link } from 'react-router-dom'
 import { Actions, Comment } from '../components'
@@ -24,6 +24,7 @@ const PostPage = () => {
     const [comment, setComment] = useState('')
     const [comments, setComments] = useState([])
     const [loading, setLoading] = useState(false)
+    const [pageLoading, setPageLoading] = useState(true)
     const toast = useToast()
     const navigate = useNavigate()
 
@@ -60,6 +61,7 @@ const PostPage = () => {
 
 
         async function getPost() {
+            setPageLoading(true)
             const response = await makeRequest(`posts/${postId}`)
 
             if (response.error) {
@@ -75,6 +77,7 @@ const PostPage = () => {
                 setComments(response.response.data[0].replies)
             }
 
+            setPageLoading(false)
 
         }
 
@@ -143,12 +146,14 @@ const PostPage = () => {
 
     console.log(post)
 
-    return (
-        <Flex flexDirection={'column'}>
+   
+
+    return !pageLoading ?
+        (<Flex flexDirection={'column'}>
             <Flex flex={1} gap={2} flexDirection={'column'}>
                 <Flex justifyContent={'space-between'}>
                     <Flex alignItems={'center'} gap={3}>
-                        <Avatar size={'md'}  src={post?.postedBy[0]?.pfp?.url} />
+                        <Avatar size={'md'} src={post?.postedBy[0]?.pfp?.url} />
                         <Link to={`/profile/${post?.postedBy[0]?.userName}`}>
                             <Text size={'sm'} fontWeight={'bold'}  >{post?.postedBy[0]?.userName}</Text>
                         </Link>
@@ -227,8 +232,11 @@ const PostPage = () => {
                 />
             ])}
 
-        </Flex>
-    )
+        </Flex>) : 
+        (<Flex width={'100%'} height={'80vh'} alignItems={'center'} justifyContent={'center'}>
+            <Spinner />
+        </Flex>)
+
 }
 
 export default PostPage

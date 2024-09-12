@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { UserHeader, UserPost } from '../components'
 import { makeRequest } from '../Utils/api'
-import { useToast } from '@chakra-ui/react'
+import { Flex, Spinner, useToast } from '@chakra-ui/react'
 import { useRecoilState } from 'recoil'
 import { userAtom } from '../Atoms/user'
 import { toastingSytex } from '../Helper/toastingSyntext'
@@ -12,10 +12,12 @@ const UserPage = () => {
     const [user, setUser] = useState()
     const [posts, setPosts] = useState()
     const [loggedinUser] = useRecoilState(userAtom)
+    const [loading, setLoading] = useState(true)
     const toast = useToast()
 
     useEffect(() => {
         async function getUserProfile() {
+            setLoading(true)
             const response = await makeRequest(`users/profile/${userName}`)
 
             if (response.error) {
@@ -30,6 +32,8 @@ const UserPage = () => {
                 setUser(response.response.data[0])
                 setPosts(response.response.data[0]?.posts)
             }
+
+            setLoading(false)
         }
 
         getUserProfile()
@@ -78,46 +82,58 @@ const UserPage = () => {
 
     return (
         <div style={{ marginBottom: "10px" }}>
-            <UserHeader
-                userName={user?.userName}
-                fullName={user?.name}
-                avatar={user?.pfp?.url}
-                bio={user?.bio}
-                instagram={user?.instagram}
-                followers={user?.followersCount}
-                followed={user?.followed}
-                userId={user?._id}
-                sameUser={user?._id === loggedinUser?._id}
-            />
+            {loading &&
+                <Flex width={'100%'} height={'80vh'} alignItems={'center'} justifyContent={'center'}>
+                    <Spinner />
+                </Flex>
+            }
 
-            {posts?.map((post) => {
-                const likeCount = post?.likes.length
-                const liked = post?.likes.includes(loggedinUser?._id)
-                const replyCount = post?.replies.length
-                const relativeTime = getRelativeTime(new Date(post?.createdAt))
-                const repliesUser = post?.replies?.slice(0, 3)
+            {!loading &&
+                <>
+
+                    <UserHeader
+                        userName={user?.userName}
+                        fullName={user?.name}
+                        avatar={user?.pfp?.url}
+                        bio={user?.bio}
+                        instagram={user?.instagram}
+                        followers={user?.followersCount}
+                        followed={user?.followed}
+                        userId={user?._id}
+                        sameUser={user?._id === loggedinUser?._id}
+                    />
+
+                    {posts?.map((post) => {
+                        const likeCount = post?.likes.length
+                        const liked = post?.likes.includes(loggedinUser?._id)
+                        const replyCount = post?.replies.length
+                        const relativeTime = getRelativeTime(new Date(post?.createdAt))
+                        const repliesUser = post?.replies?.slice(0, 3)
 
 
-                return (
-                    <>
-                        <UserPost
-                            key={post?._id}
-                            userId={user?._id}
-                            likes={likeCount}
-                            replies={replyCount}
-                            postImg={post.postImg?.url}
-                            postTitle={post.postTitle}
-                            liked={liked}
-                            postId={post._id}
-                            date={relativeTime}
-                            userAvatar={post?.postedBy?.pfp?.url}
-                            userName={post?.postedBy?.userName}
-                            repliesUser={repliesUser}
-                            handleDeletePost={handleDeletePost}
-                        />
-                    </>
-                )
-            })}
+                        return (
+                            <>
+                                <UserPost
+                                    key={post?._id}
+                                    userId={user?._id}
+                                    likes={likeCount}
+                                    replies={replyCount}
+                                    postImg={post.postImg?.url}
+                                    postTitle={post.postTitle}
+                                    liked={liked}
+                                    postId={post._id}
+                                    date={relativeTime}
+                                    userAvatar={post?.postedBy?.pfp?.url}
+                                    userName={post?.postedBy?.userName}
+                                    repliesUser={repliesUser}
+                                    handleDeletePost={handleDeletePost}
+                                />
+                            </>
+                        )
+                    })}
+                </>
+
+            }
 
         </div>
     )

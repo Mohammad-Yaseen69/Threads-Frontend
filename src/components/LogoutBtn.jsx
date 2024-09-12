@@ -19,7 +19,7 @@ const LogoutBtn = () => {
 
         response.response?.success && toast({
             title: "Success",
-            description: res.response.success,
+            description: response.response.success,
             status: "success",
             duration: 3000,
             isClosable: true,
