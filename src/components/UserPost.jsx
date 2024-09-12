@@ -10,7 +10,7 @@ import { RiDeleteBin5Fill } from "react-icons/ri";
 import { useRecoilState } from 'recoil'
 import { userAtom } from '../Atoms/user'
 
-const UserPost = ({ likes, replies, postImg, postTitle, userName, userId, liked, postId, userAvatar, date, repliesUser }) => {
+const UserPost = ({ likes, replies, postImg, postTitle, userName, userId, liked, postId, userAvatar, date, repliesUser , handleDeletePost }) => {
     const { colorMode } = useColorMode()
     const [likedState, setLikedState] = useState(liked);
     const [likesState, setLikesState] = useState(likes)
@@ -37,6 +37,12 @@ const UserPost = ({ likes, replies, postImg, postTitle, userName, userId, liked,
         }
 
         console.log(response.response.message)
+    }
+
+    const handleDelete = async () => {
+        Setloading(true)
+        const response = await handleDeletePost(postId)
+        Setloading(false)
     }
 
     return (
@@ -99,7 +105,7 @@ const UserPost = ({ likes, replies, postImg, postTitle, userName, userId, liked,
 
 
                         {user?._id === userId &&
-                            <Button padding={0}>
+                            <Button onClick={handleDelete} padding={0}>
                                 <RiDeleteBin5Fill fontSize={'1.5rem'} color={'red'} cursor={'pointer'} />
                             </Button>
                         }

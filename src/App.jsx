@@ -1,6 +1,6 @@
 import { Container } from "@chakra-ui/react"
 import { Outlet, useNavigate } from "react-router-dom"
-import { Header, LogoutBtn } from "./components"
+import { Header, LogoutBtn, CreateButton } from "./components"
 import { useRecoilState } from "recoil"
 import { userAtom } from "./Atoms/user"
 import { makeRequest } from "./Utils/api"
@@ -16,12 +16,16 @@ function App() {
 
 
   return (
-    <Container maxW="620px">
+    <div>
+      <Container minH={'100vh'} maxW="620px">
 
-      <Header />
+        <Header />
+        <CreateButton />
 
-      <Outlet />
-    </Container>
+        <Outlet />
+      </Container>
+
+    </div>
   )
 }
 

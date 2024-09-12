@@ -5,10 +5,12 @@ import { makeRequest } from '../Utils/api'
 import { useToast } from '@chakra-ui/react'
 import { useRecoilState } from 'recoil'
 import { userAtom } from '../Atoms/user'
+import { toastingSytex } from '../Helper/toastingSyntext'
 
 const UserPage = () => {
     const { userName } = useParams()
     const [user, setUser] = useState()
+    const [posts, setPosts] = useState()
     const [loggedinUser] = useRecoilState(userAtom)
     const toast = useToast()
 
@@ -26,6 +28,7 @@ const UserPage = () => {
                 })
             } else {
                 setUser(response.response.data[0])
+                setPosts(response.response.data[0]?.posts)
             }
         }
 
@@ -60,6 +63,19 @@ const UserPage = () => {
         return "just now"; // If less than a second
     };
 
+    const handleDeletePost = async (postId) => {
+        const response = await makeRequest(`posts/delete/${postId}`, {
+            method: "DELETE"
+        })
+
+        if (response.error) {
+            toastingSytex(toast, "error", "Error", response.error.message)
+        }
+
+        toastingSytex(toast, "success", "Success", response.response.message)
+        setPosts(posts.filter(post => post._id !== postId))
+    }
+
     return (
         <div style={{ marginBottom: "10px" }}>
             <UserHeader
@@ -74,7 +90,7 @@ const UserPage = () => {
                 sameUser={user?._id === loggedinUser?._id}
             />
 
-            {user?.posts?.map((post) => {
+            {posts?.map((post) => {
                 const likeCount = post?.likes.length
                 const liked = post?.likes.includes(loggedinUser?._id)
                 const replyCount = post?.replies.length
@@ -97,6 +113,7 @@ const UserPage = () => {
                             userAvatar={post?.postedBy?.pfp?.url}
                             userName={post?.postedBy?.userName}
                             repliesUser={repliesUser}
+                            handleDeletePost={handleDeletePost}
                         />
                     </>
                 )
