@@ -205,9 +205,8 @@ const PostPage = () => {
 
             <Flex as="form" onSubmit={handleAddComment} gap={3} flexDirection={'row'} mb={4}>
                 <Flex flex={4} gap={2}>
-                    <Avatar name={user?.userName} src={user?.pfp?.url} />
+                    <Avatar src={user?.pfp?.url} />
                     <Input
-
                         placeholder="Write a comment..."
                         value={comment}
                         onChange={(e) => setComment(e.target.value)}

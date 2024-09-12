@@ -77,7 +77,7 @@ export default function SignupCard({ setAuthScreen }) {
         localStorage.setItem("user", JSON.stringify(res.response.data))
         setUser(res.response.data)
       }
-      
+
     } catch (error) {
       console.log(error)
     }
@@ -107,29 +107,35 @@ export default function SignupCard({ setAuthScreen }) {
             sm: "400px"
           }}>
 
-            <Flex gap={2} mb={3}>
-              <FormControl id="userName" isRequired>
-                <FormLabel>User Name</FormLabel>
-                <Input
-                  value={inputs.userName}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    // Check if the new value is valid
-                    if (usernameRegex.test(value) || value === '') {
-                      setInputs({ ...inputs, userName: value });
-                    } else {
-                      setErrorWithTimeout("Only lowercase letters, numbers, '.' and '_' are allowed for the username.");
-                    }
-                  }}
-                  type="text"
-                />
-              </FormControl>
+          <Flex gap={2} mb={3}>
+            <FormControl id="userName" isRequired>
+              <FormLabel>User Name</FormLabel>
+              <Input
+                value={inputs.userName}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  // Check if the new value is valid
+                  if (usernameRegex.test(value) || value === '') {
+                    setInputs({ ...inputs, userName: value });
+                  } else {
+                    toast({
+                      title: "Error",
+                      description: "Only lowercase letters, numbers, '.' and '_' are allowed for the username.",
+                      status: "error",
+                      duration: 3000,
+                      isClosable: true,
+                    })
+                  }
+                }}
+                type="text"
+              />
+            </FormControl>
 
-              <FormControl id="name" isRequired>
-                <FormLabel>Full Name</FormLabel>
-                <Input value={inputs.name} onChange={(e) => setInputs({ ...inputs, name: e.target.value })} type="text" />
-              </FormControl>
-            </Flex>
+            <FormControl id="name" isRequired>
+              <FormLabel>Full Name</FormLabel>
+              <Input value={inputs.name} onChange={(e) => setInputs({ ...inputs, name: e.target.value })} type="text" />
+            </FormControl>
+          </Flex>
           <Stack spacing={4}>
             <FormControl id="email" isRequired>
               <FormLabel>Email</FormLabel>
