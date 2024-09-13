@@ -33,8 +33,6 @@ const Post = ({ likes, replies, postImg, postTitle, userName, userId, liked, pos
         if (response.error) {
             toastingSytex(toast, "error", "Error", response.error.message)
         }
-
-        console.log(response.response.message)
     }
 
     const handleDelete = async () => {

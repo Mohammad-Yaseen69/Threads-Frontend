@@ -18,7 +18,6 @@ const UserPost = ({ likes, replies, postImg, postTitle, userName, userId, liked,
     const [user] = useRecoilState(userAtom)
     const [loading, Setloading] = useState(false)
 
-    console.log(repliesUser)
 
     async function handleLike() {
         setLikedState(!likedState);
@@ -36,7 +35,7 @@ const UserPost = ({ likes, replies, postImg, postTitle, userName, userId, liked,
             toastingSytex(toast, "error", "Error", response.error.message)
         }
 
-        console.log(response.response.message)
+       
     }
 
     const handleDelete = async () => {

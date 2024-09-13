@@ -26,11 +26,8 @@ const Comment = ({ createdAt, reply, postId, handleDelete }) => {
         const response = await makeRequest(`posts/reply/like/${postId}/${reply._id}`, {
             method: "POST"
         })
-
-        console.log(response?.response)
     }
-    9
-
+   
 
     return (
         <Flex gap={2}>

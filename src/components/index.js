@@ -11,3 +11,4 @@ export {default as ChangeUserName} from './ChangeUserName'
 export {default as ChangePass} from './ChangePassword'
 export {default as CreateButton} from "./CreateButton"
 export {default as Post} from "./Post"
+export {default as UserProfileCard} from "./UserProfileCard"

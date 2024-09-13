@@ -17,7 +17,7 @@ function App() {
 
   return (
     <div>
-      <Container minH={'100vh'} maxW="620px">
+      <Container minH={'100vh'} maxW="650px">
 
         <Header />
         <CreateButton />
