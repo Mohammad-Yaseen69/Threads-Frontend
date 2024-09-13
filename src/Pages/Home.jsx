@@ -3,9 +3,9 @@ import { useEffect, useState } from 'react'
 import React from 'react'
 import { makeRequest } from '../Utils/api'
 import { Flex, Spinner, Stack, Box, Heading } from '@chakra-ui/react'
-import { Post , UserProfileCard} from "../components"
+import { Post, UserProfileCard } from "../components"
 import { userAtom } from '../Atoms/user'
-  // Import the new component
+// Import the new component
 
 
 const Home = () => {
@@ -38,11 +38,11 @@ const Home = () => {
         const diffInSeconds = Math.floor((now - date) / 1000);
 
         const timeIntervals = {
-            year: 31536000,  
-            month: 2592000,  
-            week: 604800,    
-            day: 86400,      
-            hour: 3600,      
+            year: 31536000,
+            month: 2592000,
+            week: 604800,
+            day: 86400,
+            hour: 3600,
             minute: 60,
             second: 1
         };
@@ -59,7 +59,30 @@ const Home = () => {
     }
 
     return (
-        <Flex>
+        <Flex flexDirection={{
+            base: 'column',
+            md: 'row'
+        }}>
+            <Box display={{
+                base: 'block',
+                md: 'none'
+            }} flex={1} mb={5} mt={4} ml={{
+                base: 0,
+                md: 4
+            }}>
+                <Heading as="h3" size="md" mb={4}>Suggested Users</Heading>
+                {suggestedUsers.map(user => (
+                    <UserProfileCard
+                        key={user?._id}
+                        userId={user?._id}
+                        userName={user?.userName}
+                        fullName={user?.name}
+                        avatar={user?.pfp?.url}
+                        followed={user?.isFollowed}
+                    />
+                ))}
+            </Box>
+
             <Stack flex={3}>
                 {loading ? (
                     <Flex height={'80vh'} alignItems={'center'} justifyContent={'center'}>
@@ -94,7 +117,13 @@ const Home = () => {
             </Stack>
 
             {/* Suggested Users Section */}
-            <Box flex={1} mt={4} ml={4}>
+            <Box display={{
+                base: 'none',
+                md: 'block'
+            }} flex={1} mb={5} mt={4} ml={{
+                base: 0,
+                md: 4
+            }}>
                 <Heading as="h3" size="md" mb={4}>Suggested Users</Heading>
                 {suggestedUsers.map(user => (
                     <UserProfileCard

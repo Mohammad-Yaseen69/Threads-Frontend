@@ -43,7 +43,10 @@ const Post = ({ likes, replies, postImg, postTitle, userName, userId, liked, pos
 
     return (
         <Flex gap={3} pt={5} pb={5}>
-            <Flex align={'center'} flexDirection={'column'}>
+            <Flex display={{
+                base: 'none',
+                sm: 'flex'
+            }} align={'center'} flexDirection={'column'}>
                 <Avatar
                     size={'md'}
                     src={userAvatar}
@@ -92,6 +95,15 @@ const Post = ({ likes, replies, postImg, postTitle, userName, userId, liked, pos
             <Flex flex={1} gap={2} flexDirection={'column'}>
                 <Flex justifyContent={'space-between'}>
                     <Flex alignItems={'center'}>
+                        <Avatar
+                            size={'md'}
+                            src={userAvatar}
+                            mr={2}
+                            display={{
+                                base: "block",
+                                sm: "none"
+                            }}
+                        />
                         <Link to={`/profile/${userName}`} ><Text size={'sm'} fontWeight={'bold'}  >{userName}</Text></Link>
                     </Flex>
                     <Flex alignItems={'center'}>
@@ -109,7 +121,7 @@ const Post = ({ likes, replies, postImg, postTitle, userName, userId, liked, pos
                 </Flex>
 
                 <Link to={`/post/${postId}`}>
-                    <Text fontSize={'md'} mb={3}>{postTitle}</Text>
+                    <Text fontSize={'md'} wordBreak={'break-all'} mb={3}>{postTitle}</Text>
 
 
 
@@ -121,9 +133,22 @@ const Post = ({ likes, replies, postImg, postTitle, userName, userId, liked, pos
                             borderColor={'gray.light'}
                             cursor={'pointer'}
                             maxH={'500px'}
+                            w={{
+                                base: '88vw', // Full width on base view
+                                sm: '100%'
+                            }}             // Ensures the image container takes full width
+                            maxW={'100%'}          // Prevents horizontal scrolling
                         >
-                            <Image w={'full'} src={postImg} />
+                            <Image
+                                w={'100%'}
+                                h={'auto'}
+                                objectFit={'cover'}
+                                src={postImg}
+                                alt="Post image"
+                            />
                         </Box>
+
+
                     }
 
                 </Link>

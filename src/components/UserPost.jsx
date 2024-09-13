@@ -10,7 +10,7 @@ import { RiDeleteBin5Fill } from "react-icons/ri";
 import { useRecoilState } from 'recoil'
 import { userAtom } from '../Atoms/user'
 
-const UserPost = ({ likes, replies, postImg, postTitle, userName, userId, liked, postId, userAvatar, date, repliesUser , handleDeletePost }) => {
+const UserPost = ({ likes, replies, postImg, postTitle, userName, userId, liked, postId, userAvatar, date, repliesUser, handleDeletePost }) => {
     const { colorMode } = useColorMode()
     const [likedState, setLikedState] = useState(liked);
     const [likesState, setLikesState] = useState(likes)
@@ -35,7 +35,7 @@ const UserPost = ({ likes, replies, postImg, postTitle, userName, userId, liked,
             toastingSytex(toast, "error", "Error", response.error.message)
         }
 
-       
+
     }
 
     const handleDelete = async () => {
@@ -46,7 +46,10 @@ const UserPost = ({ likes, replies, postImg, postTitle, userName, userId, liked,
 
     return (
         <Flex gap={3} pt={5} pb={5}>
-            <Flex align={'center'} flexDirection={'column'}>
+            <Flex display={{
+                base: 'none',
+                sm: 'flex'
+            }} align={'center'} flexDirection={'column'}>
                 <Avatar
                     size={'md'}
                     src={userAvatar}
@@ -95,6 +98,15 @@ const UserPost = ({ likes, replies, postImg, postTitle, userName, userId, liked,
             <Flex flex={1} gap={2} flexDirection={'column'}>
                 <Flex justifyContent={'space-between'}>
                     <Flex alignItems={'center'}>
+                        <Avatar
+                            size={'md'}
+                            src={userAvatar}
+                            mr={2}
+                            display={{
+                                base: "block",
+                                sm: "none"
+                            }}
+                        />
                         <Link to={`/profile/${userName}`} ><Text size={'sm'} fontWeight={'bold'}  >{userName}</Text></Link>
                     </Flex>
                     <Flex alignItems={'center'}>
@@ -112,7 +124,7 @@ const UserPost = ({ likes, replies, postImg, postTitle, userName, userId, liked,
                 </Flex>
 
                 <Link to={`/post/${postId}`}>
-                    <Text fontSize={'md'} mb={3}>{postTitle}</Text>
+                    <Text fontSize={'md'} wordBreak={'break-all'} mb={3}>{postTitle}</Text>
 
 
 
@@ -124,8 +136,19 @@ const UserPost = ({ likes, replies, postImg, postTitle, userName, userId, liked,
                             borderColor={'gray.light'}
                             cursor={'pointer'}
                             maxH={'500px'}
+                            w={{
+                                base: '88vw', // Full width on base view
+                                sm: '100%'
+                            }}             // Ensures the image container takes full width
+                            maxW={'100%'}          // Prevents horizontal scrolling
                         >
-                            <Image w={'full'} src={postImg} />
+                            <Image
+                                w={'100%'}
+                                h={'auto'}
+                                objectFit={'cover'}
+                                src={postImg}
+                                alt="Post image"
+                            />
                         </Box>
                     }
 

@@ -86,7 +86,11 @@ const CreateButton = () => {
 
     return (
         <>
-            <Flex onClick={() => setIsOpen(true)} position={'fixed'} bottom={5} cursor={'pointer'} alignItems={'center'} right={10} backgroundColor={'gray.dark'} borderRadius={'10px'} padding={'8px 15px'} color={'white'}>
+            <Flex zIndex={'12'} onClick={() => setIsOpen(true)} position={'fixed'} bottom={5} cursor={'pointer'} alignItems={'center'} right={{
+                base: '10px',
+                md: '30px',
+                lg: '30px',
+            }} backgroundColor={'gray.dark'} borderRadius={'10px'} padding={'8px 15px'} color={'white'}>
                 <IoIosAdd size={25} fontWeight={'700'} />
                 <Text fontWeight={'700'}>Post</Text>
             </Flex>

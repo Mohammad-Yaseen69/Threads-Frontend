@@ -37,7 +37,7 @@ const UserProfileCard = ({ userName, fullName, avatar, followed, userId }) => {
     }
 
     return (
-        <Flex alignItems="center" justifyContent="space-between" mb={4}>
+        <Flex alignItems="center" justifyContent="space-between" mb={5}>
             <Flex alignItems="center">
                 <Avatar src={avatar} size="md" />
                 <Box ml={1} mr={2}>
