@@ -59,10 +59,20 @@ const Home = () => {
     }
 
     return (
-        <Flex flexDirection={{
-            base: 'column',
-            md: 'row'
-        }}>
+        <Flex
+            flexDirection={{
+                base: 'column',
+                md: 'row'
+            }}
+            width={{
+                base: 'full',
+                lg: '750px'
+            }}
+            position={'absolute'}
+            left={'50%'}
+            transform={'translateX(-50%)'}
+            p={3}
+        >
             <Box display={{
                 base: 'block',
                 md: 'none'

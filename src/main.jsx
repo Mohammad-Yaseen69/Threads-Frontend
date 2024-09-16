@@ -4,7 +4,7 @@ import { ChakraProvider, extendTheme, ColorModeScript } from "@chakra-ui/react"
 import { mode } from "@chakra-ui/theme-tools"
 import { BrowserRouter, createRoutesFromElements, createBrowserRouter, Route, RouterProvider , Navigate} from "react-router-dom"
 import './index.css'
-import { PostPage, UserPage, Auth , UpdateInfo, Home} from './Pages'
+import { PostPage, UserPage, Auth , UpdateInfo, Home, Chat} from './Pages'
 import { RecoilRoot } from "recoil"
 
 
@@ -37,6 +37,7 @@ const routes = createBrowserRouter(
       <Route path='/post/:postId' element={<PostPage />} />
       <Route path='/auth' element={<Auth />} />
       <Route path='/updateInfo' element={<UpdateInfo />} />
+      <Route path='/chat/:chatId' element={<Chat />} />
     </Route>
   )
 )

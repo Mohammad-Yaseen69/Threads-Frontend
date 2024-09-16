@@ -1,4 +1,4 @@
-import { Container } from "@chakra-ui/react"
+import { Box, Container } from "@chakra-ui/react"
 import { Outlet, useNavigate } from "react-router-dom"
 import { Header, LogoutBtn, CreateButton } from "./components"
 import { useRecoilState } from "recoil"
@@ -16,7 +16,10 @@ function App() {
 
 
   return (
-    <div>
+    <Box   style={{
+      position: "relative",
+      width: '100%'
+    }}>
       <Container minH={'100vh'} maxW="650px">
 
         <Header />
@@ -24,8 +27,7 @@ function App() {
 
         <Outlet />
       </Container>
-
-    </div>
+    </Box>
   )
 }
 
