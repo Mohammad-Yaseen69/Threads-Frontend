@@ -1,22 +1,46 @@
-import React, { useState } from 'react'
-import { Box, Button, Flex, Input, Skeleton, SkeletonCircle, Text } from '@chakra-ui/react'
+import React, { useEffect, useState } from 'react'
+import { Box, Button, Flex, Input, Skeleton, SkeletonCircle, Text, useToast } from '@chakra-ui/react'
 import { FaSearch } from "react-icons/fa";
 import { Conversation, MessageConversation, } from "../components"
 import { GiConversation } from "react-icons/gi"
 import { useParams } from 'react-router-dom';
+import { makeRequest } from '../Utils/api';
+import { toastingSytex } from '../Helper/toastingSyntext';
 
 const Chat = () => {
-    const [convoLoading, setConvoLoading] = useState(false)
+    const [convoLoading, setConvoLoading] = useState(true)
     const [search, setSearch] = useState('')
     const { chatId } = useParams()
+    const [conversations, setConversations] = useState([])
+    const [currentConversation, setCurrentConversation] = useState(null)
+    const toast = useToast()
 
     const handleSearch = () => {
 
     }
 
+    useEffect(() => {
+        async function getConversations() {
+            setConvoLoading(true)
+            const response = await makeRequest("chats/get/conversations")
+            if (response.error) {
+                toastingSytex(toast, 'error', response.error.message)
+            }
 
+            setConvoLoading(false)
+            setConversations(response.response.data)
+        }
 
-    console.log(chatId)
+        getConversations()
+    }, [])
+
+    useEffect(() => {
+        if (conversations) {
+            setCurrentConversation(conversations.find((c) => c._id === chatId))
+        }
+    }, [chatId])
+
+    console.log(currentConversation)
 
     return (
         <Box
@@ -91,15 +115,15 @@ const Chat = () => {
                             </Flex>
                         ))
                     )}
-                    {/* Example Conversations */}
-                    <Conversation convoId={'asdfasdfasdfasdf'} avatar={'https://bit.ly/broken-link'} name={'Toji Fushiguro'} message={'Some Message Blah Blah Blah Blah Blah...'} />
-                    <Conversation convoId={'asdfasdfasdfasdf'} avatar={'https://bit.ly/broken-link'} name={'Toji Fushiguro'} message={'Some Message Blah Blah Blah Blah Blah...'} />
-                    <Conversation convoId={'asdfasdfasdfasdf'} avatar={'https://bit.ly/broken-link'} name={'Toji Fushiguro'} message={'Some Message Blah Blah Blah Blah Blah...'} />
-                    <Conversation convoId={'asdfasdfasdfasdf'} avatar={'https://bit.ly/broken-link'} name={'Toji Fushiguro'} message={'Some Message Blah Blah Blah Blah Blah...'} />
-                    <Conversation convoId={'asdfasdfasdfasdf'} avatar={'https://bit.ly/broken-link'} name={'Toji Fushiguro'} message={'Some Message Blah Blah Blah Blah Blah...'} />
-                    <Conversation convoId={'asdfasdfasdfasdf'} avatar={'https://bit.ly/broken-link'} name={'Toji Fushiguro'} message={'Some Message Blah Blah Blah Blah Blah...'} />
-                    
 
+                    {!convoLoading && conversations.map((conversation) => (
+                        <Conversation
+                            convoId={conversation._id}
+                            avatar={conversation.participantsInfo?.pfp?.url}
+                            name={conversation.participantsInfo?.name}
+                            message={conversation.lastMessage?.text}
+                        />
+                    ))}
                 </Flex>
 
                 {chatId == 'null' ?
@@ -115,7 +139,10 @@ const Chat = () => {
                         <Text fontSize={20}>Select a Conversation to Start Messaging</Text>
                     </Flex> :
 
-                    <MessageConversation />
+                    <MessageConversation
+                        conversationId={chatId}
+                        currentConversation={currentConversation}
+                    />
                 }
 
             </Flex>

@@ -1,9 +1,33 @@
+import { useToast } from '@chakra-ui/react'
 import { Avatar, Divider, Flex, Skeleton, SkeletonCircle, Text, useColorModeValue } from '@chakra-ui/react'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Message, MessageInput } from './'
+import { makeRequest } from '../Utils/api'
+import { toastingSytex } from '../Helper/toastingSyntext'
+import { useRecoilState } from 'recoil'
+import { userAtom } from '../Atoms/user'
 
-const MessageConversation = () => {
+const MessageConversation = ({ conversationId, currentConversation }) => {
     const [messages, setMessages] = useState([])
+    const toast = useToast()
+    const [loading, setLoading] = useState(true)
+    const [user] = useRecoilState(userAtom)
+
+    useEffect(() => {
+        const getMessages = async () => {
+            setLoading(true)
+            const response = await makeRequest("chats/get/messages/" + conversationId)
+
+            if (response.error) {
+                toastingSytex(toast, 'error', response.error.message)
+            }
+
+            setLoading(false)
+            setMessages(response.response?.data)
+        }
+        getMessages()
+    }, [conversationId])
+
     return (
         <Flex
             flex={{
@@ -17,8 +41,8 @@ const MessageConversation = () => {
             padding={2}
         >
             <Flex h={12} alignItems={'center'} w={'full'} gap={2}>
-                <Avatar size={'sm'} src={''} />
-                <Text fontWeight={'bold'}>Dan Abramov</Text>
+                <Avatar size={'sm'} src={currentConversation?.participantsInfo?.pfp?.url} />
+                <Text fontWeight={'bold'}>{currentConversation?.participantsInfo?.name}</Text>
             </Flex>
             <Divider />
 
@@ -44,7 +68,7 @@ const MessageConversation = () => {
                     },
                 }}
             >
-                {false &&
+                {loading &&
                     [...Array(5)].map((_, i) => (
                         <Flex
                             key={i}
@@ -68,19 +92,20 @@ const MessageConversation = () => {
                     ))
                 }
 
-                {/* {messages.map((message) => (
-                    <Message message={message} key={message._id} />
-                ))} */}
+                {messages?.map((message) => (
+                    <Message
+                        message={message?.text}
+                        ownMessage={message?.sender === user?._id}
+                        key={message._id}
+                        otherUserInfo={currentConversation?.participantsInfo}
+                        UserInfo={user}
+                    />
+                ))}
 
-                <Message ownMessage={true} />
-                <Message ownMessage={false} />
-                <Message ownMessage={false} />
-                <Message ownMessage={true} />
-                <Message ownMessage={false} />
 
 
             </Flex>
-            <MessageInput />
+            <MessageInput OtherParticipantId={currentConversation?.participantsInfo?._id} setMessages={setMessages}/>
         </Flex>
     )
 }
