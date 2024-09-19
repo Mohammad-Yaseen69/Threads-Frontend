@@ -4,6 +4,7 @@ import { CgMoreO } from "react-icons/cg"
 import React, { useEffect, useState } from 'react'
 import { color } from 'framer-motion'
 import { makeRequest } from '../Utils/api'
+import { useNavigate } from 'react-router-dom'
 
 const UserHeader = ({
     userName,
@@ -22,7 +23,9 @@ const UserHeader = ({
     const [followedState, setFollowedState] = useState(followed)
     const [followerState, setFollowerState] = useState(followers)
     const [followFormat, setFollowFormat] = useState("")
-    const [loading , setLoading] = useState(false)
+    const [loading, setLoading] = useState(false)
+    const [convoLoading, setConvoLoading] = useState(false)
+    const navigate = useNavigate()
 
     useEffect(() => {
         setFollowedState(followed)
@@ -31,6 +34,33 @@ const UserHeader = ({
     useEffect(() => {
         setFollowerState(followers)
     }, [followers])
+
+
+    const handleNavigateConversation = async () => {
+        setConvoLoading(true)
+        const response = await makeRequest(`chats/getOrCreateConversation/${userId}`, {
+            method: "POST"
+        });
+
+        setConvoLoading(false)
+
+        console.log(response)
+
+        if (response.response) {
+            const conversationId = response.response.conversationId;
+            navigate(`/chat/${conversationId}`);
+        }
+
+        else {
+            toast({
+                title: 'Error',
+                description: response.error.message,
+                status: 'error',
+                duration: 3000,
+                isClosable: true,
+            })
+        }
+    };
 
 
 
@@ -120,6 +150,8 @@ const UserHeader = ({
 
             <Text >{bio} </Text>
 
+
+
             <Flex flexDirection={{
                 base: 'column',
                 sm: 'row'
@@ -127,11 +159,6 @@ const UserHeader = ({
             }} gap={3} justifyContent={'space-between'} w={'full'}>
                 <Flex alignItems={'center'} gap={2}>
                     <Text color={'gray.light'}>{followFormat} followers</Text>
-                    {!sameUser &&
-                        <Button isLoading={loading} _hover={!followedState && "blue.600"} onClick={handleFollow} backgroundColor={!followedState && "blue.700"}>
-                            {followedState ? "Unfollow" : "Follow"}
-                        </Button>
-                    }
                 </Flex>
 
                 <Flex alignItems={'center'}>
@@ -157,6 +184,23 @@ const UserHeader = ({
                         </Menu>
                     </Box>
                 </Flex>
+            </Flex>
+
+            <Flex alignItems={'center'} gap={4}>
+                {!sameUser &&
+                    <Button
+                        isLoading={loading}
+                        _hover={!followedState && "blue.600"}
+                        onClick={handleFollow}
+                        backgroundColor={!followedState && "blue.700"}>
+                        {followedState ? "Unfollow" : "Follow"}
+                    </Button>
+                }
+                {!sameUser &&
+                    <Button isLoading={convoLoading} onClick={handleNavigateConversation}>
+                        Message
+                    </Button>
+                }
             </Flex>
 
             <Flex w='full'>

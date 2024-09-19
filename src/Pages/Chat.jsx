@@ -40,8 +40,6 @@ const Chat = () => {
         }
     }, [chatId])
 
-    console.log(currentConversation)
-
     return (
         <Box
             position={'absolute'}
@@ -142,6 +140,7 @@ const Chat = () => {
                     <MessageConversation
                         conversationId={chatId}
                         currentConversation={currentConversation}
+                        setAllConversations={setConversations}
                     />
                 }
 
