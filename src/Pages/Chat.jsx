@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { Box, Button, Flex, Input, Skeleton, SkeletonCircle, Text, useToast } from '@chakra-ui/react'
-import { FaSearch } from "react-icons/fa";
 import { Conversation, MessageConversation, } from "../components"
 import { GiConversation } from "react-icons/gi"
 import { useParams } from 'react-router-dom';
@@ -12,12 +11,9 @@ const Chat = () => {
     const [search, setSearch] = useState('')
     const { chatId } = useParams()
     const [conversations, setConversations] = useState([])
-    const [currentConversation, setCurrentConversation] = useState(null)
     const toast = useToast()
 
-    const handleSearch = () => {
 
-    }
 
     useEffect(() => {
         async function getConversations() {
@@ -34,12 +30,6 @@ const Chat = () => {
         getConversations()
     }, [])
 
-    useEffect(() => {
-        if (conversations) {
-            setCurrentConversation(conversations.find((c) => c._id === chatId))
-        }
-    }, [chatId])
-
     return (
         <Box
             position={'absolute'}
@@ -50,7 +40,7 @@ const Chat = () => {
                 md: "750px"
             }}
             padding={{
-                base: 5,
+                base: 0,
                 md: 0
             }}
         >
@@ -90,16 +80,10 @@ const Chat = () => {
                         },
                     }}
                 >
-                    <Text fontWeight={'bold'}>Your Conversations</Text>
-                    <form>
-                        <Flex alignItems={'center'} gap={2}>
-                            <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder='Search For a User' />
-                            <Button onClick={handleSearch} size={'sm'}>
-                                <FaSearch />
-                            </Button>
-                        </Flex>
-                    </form>
-
+                    <Text display={{
+                        base: chatId == 'null' ? 'block' : 'none',
+                        md: 'block'
+                    }} fontWeight={'bold'}>Your Conversations</Text>
 
                     {convoLoading && (
                         [1, 2, 3, 4, 5].map((_, i) => (
@@ -114,14 +98,19 @@ const Chat = () => {
                         ))
                     )}
 
-                    {!convoLoading && conversations.map((conversation) => (
-                        <Conversation
-                            convoId={conversation._id}
-                            avatar={conversation.participantsInfo?.pfp?.url}
-                            name={conversation.participantsInfo?.name}
-                            message={conversation.lastMessage?.text}
-                        />
-                    ))}
+                    <Box display={{
+                        base: chatId == 'null' ? 'block' : 'none',
+                        md: 'block'
+                    }}>
+                        {!convoLoading && conversations.map((conversation) => (
+                            <Conversation
+                                convoId={conversation._id}
+                                avatar={conversation.participantsInfo?.pfp?.url}
+                                name={conversation.participantsInfo?.name}
+                                message={conversation.lastMessage?.text}
+                            />
+                        ))}
+                    </Box>
                 </Flex>
 
                 {chatId == 'null' ?
@@ -132,6 +121,10 @@ const Chat = () => {
                         justifyContent={'center'}
                         borderRadius={'md'}
                         height={'400px'}
+                        display={{
+                            base: 'none',
+                            md: 'flex'
+                        }}
                     >
                         <GiConversation size={100} />
                         <Text fontSize={20}>Select a Conversation to Start Messaging</Text>
@@ -139,7 +132,6 @@ const Chat = () => {
 
                     <MessageConversation
                         conversationId={chatId}
-                        currentConversation={currentConversation}
                         setAllConversations={setConversations}
                     />
                 }

@@ -4,13 +4,16 @@ import React from 'react'
 import { IoSendSharp } from 'react-icons/io5'
 import { makeRequest } from '../Utils/api'
 import { toastingSytex } from '../Helper/toastingSyntext'
+import { useRecoilState } from 'recoil'
+import { userAtom } from '../Atoms/user'
 
-const MessageInput = ({ setMessages, OtherParticipantId, isAllowed, conversationId }) => {
+const MessageInput = ({ setMessages, OtherParticipantId, isAllowed, conversationId, setConversations }) => {
     const [message, setMessage] = useState('')
     const toast = useToast()
     const [canAllow, setCanAllow] = useState(false)
     const [loading, setLoading] = useState(true)
     const [isAllowedState, setIsAllowed] = useState(undefined)
+    const [user] = useRecoilState(userAtom)
 
 
     useEffect(() => {
@@ -52,6 +55,22 @@ const MessageInput = ({ setMessages, OtherParticipantId, isAllowed, conversation
 
         setMessage('')
         setMessages((prev) => [...prev, response?.response?.data?.messageData])
+        setConversations((prevConversations) =>
+            prevConversations.map((conv) => {
+                if (conv?._id === conversationId) {
+                    return {
+                        ...conv,
+                        lastMessage: {
+                            text: message,
+                            sender: user?._id
+                        }
+                    };
+                } else {
+                    return conv;
+                }
+            })
+        );
+
 
         if (response?.response?.data?.isAllowed !== undefined) {
             setIsAllowed(response?.response?.data?.isAllowed);

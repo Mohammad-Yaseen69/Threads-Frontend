@@ -35,7 +35,6 @@ const MessageConversation = ({ conversationId , setAllConversations }) => {
         getMessages()
     }, [conversationId])
 
-    console.log(messages)
 
     useEffect(() => {
         // Scroll to the bottom when messages are updated
@@ -76,6 +75,10 @@ const MessageConversation = ({ conversationId , setAllConversations }) => {
             flexDirection={'column'}
             bg={useColorModeValue('gray.200', 'gray.dark')}
             padding={2}
+            mt={{
+                base: '-20px',
+                md: 0
+            }}
         >
             <Flex h={12} alignItems={'center'} w={'full'} justifyContent={'space-between'} gap={2}>
                 <Flex cursor={'pointer'} onClick={() => navigate(`/profile/${conversation?.otherUser?.userName}`)} alignItems={'center'} gap={2}>
@@ -166,7 +169,7 @@ const MessageConversation = ({ conversationId , setAllConversations }) => {
                 ))}
                 <div ref={messagesEndRef} /> {/* Empty div to scroll into view */}
             </Flex>
-            <MessageInput isAllowed={conversation?.isAllowed} conversationId={conversation?._id} OtherParticipantId={conversation?.otherUser?._id} setMessages={setMessages} />
+            <MessageInput setConversations={setAllConversations}  isAllowed={conversation?.isAllowed} conversationId={conversation?._id} OtherParticipantId={conversation?.otherUser?._id} setMessages={setMessages} />
         </Flex>
     )
 }

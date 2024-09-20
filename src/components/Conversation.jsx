@@ -20,7 +20,7 @@ const Conversation = ({ avatar, name, message , convoId}) => {
             <WrapItem>
                 <Avatar
                     size={{
-                        base: "sm",
+                        base: "lg",
                         md: "md"
                     }}
                     src={avatar}

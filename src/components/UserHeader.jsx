@@ -136,7 +136,7 @@ const UserHeader = ({
                     </Text>
 
                     <Flex alignItems={'center'} gap={2}>
-                        <Text fontSize={'sm'}>{userName}</Text>
+                        <Text fontSize={'sm'}>@{userName}</Text>
                     </Flex>
                 </Box>
 
