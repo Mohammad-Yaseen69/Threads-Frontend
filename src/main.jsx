@@ -2,10 +2,11 @@ import { createRoot } from 'react-dom/client'
 import App from './App.jsx'
 import { ChakraProvider, extendTheme, ColorModeScript } from "@chakra-ui/react"
 import { mode } from "@chakra-ui/theme-tools"
-import { BrowserRouter, createRoutesFromElements, createBrowserRouter, Route, RouterProvider , Navigate} from "react-router-dom"
+import { BrowserRouter, createRoutesFromElements, createBrowserRouter, Route, RouterProvider, Navigate } from "react-router-dom"
 import './index.css'
-import { PostPage, UserPage, Auth , UpdateInfo, Home, Chat} from './Pages'
+import { PostPage, UserPage, Auth, UpdateInfo, Home, Chat } from './Pages'
 import { RecoilRoot } from "recoil"
+import { SocketContextProvider } from "./context/socketContext.jsx"
 
 
 const styles = {
@@ -48,10 +49,12 @@ const theme = extendTheme({ styles, config, colors })
 createRoot(document.getElementById('root')).render(
   <RecoilRoot>
     <ChakraProvider theme={theme}>
-      <RouterProvider router={routes}>
-        <ColorModeScript initialColorMode={theme.config.initialColorMode} />
-        <App />
-      </RouterProvider>
-    </ChakraProvider >
+      <SocketContextProvider>  {/* Move SocketContextProvider here */}
+        <RouterProvider router={routes}>
+          <ColorModeScript initialColorMode={theme.config.initialColorMode} />
+          <App />
+        </RouterProvider>
+      </SocketContextProvider>
+    </ChakraProvider>
   </RecoilRoot>
 )
