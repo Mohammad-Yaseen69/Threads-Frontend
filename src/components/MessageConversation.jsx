@@ -9,7 +9,7 @@ import { userAtom } from '../Atoms/user'
 import { RiDeleteBin5Fill } from "react-icons/ri";
 import { useNavigate } from 'react-router-dom'
 
-const MessageConversation = ({ conversationId , setAllConversations }) => {
+const MessageConversation = ({ conversationId, setAllConversations }) => {
     const [messages, setMessages] = useState([])
     const toast = useToast()
     const [loading, setLoading] = useState(true)
@@ -18,6 +18,8 @@ const MessageConversation = ({ conversationId , setAllConversations }) => {
     const messagesEndRef = useRef(null) // Ref for scrolling to the end
     const { isOpen, onOpen, onClose } = useDisclosure()
     const navigate = useNavigate()
+
+
 
     useEffect(() => {
         const getMessages = async () => {
@@ -81,9 +83,9 @@ const MessageConversation = ({ conversationId , setAllConversations }) => {
             }}
         >
             <Flex h={12} alignItems={'center'} w={'full'} justifyContent={'space-between'} gap={2}>
-                <Flex cursor={'pointer'} onClick={() => navigate(`/profile/${conversation?.otherUser?.userName}`)} alignItems={'center'} gap={2}>
-                    <Avatar size={'sm'} src={conversation?.otherUser?.pfp?.url} />
-                    <Text fontWeight={'bold'}>{conversation?.otherUser?.name}</Text>
+                <Flex cursor={'pointer'} onClick={() => !loading && navigate(`/profile/${conversation?.otherUser?.userName}`)} alignItems={'center'} gap={2}>
+                    <Avatar size={'sm'} src={!loading ? conversation?.otherUser?.pfp?.url : ""} />
+                    <Text fontWeight={'bold'}>{!loading ? conversation?.otherUser?.name : ""}</Text>
                 </Flex>
 
                 <Flex mr={2}>
@@ -169,7 +171,7 @@ const MessageConversation = ({ conversationId , setAllConversations }) => {
                 ))}
                 <div ref={messagesEndRef} /> {/* Empty div to scroll into view */}
             </Flex>
-            <MessageInput setConversations={setAllConversations}  isAllowed={conversation?.isAllowed} conversationId={conversation?._id} OtherParticipantId={conversation?.otherUser?._id} setMessages={setMessages} />
+            <MessageInput messagesLoading={loading} setConversations={setAllConversations} isAllowed={conversation?.isAllowed} conversationId={conversation?._id} OtherParticipantId={conversation?.otherUser?._id} setMessages={setMessages} />
         </Flex>
     )
 }

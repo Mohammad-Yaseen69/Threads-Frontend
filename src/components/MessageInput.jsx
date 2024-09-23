@@ -6,21 +6,64 @@ import { makeRequest } from '../Utils/api'
 import { toastingSytex } from '../Helper/toastingSyntext'
 import { useRecoilState } from 'recoil'
 import { userAtom } from '../Atoms/user'
+import { useParams } from 'react-router-dom'
+import { useSocket } from '../context/socketContext'
 
-const MessageInput = ({ setMessages, OtherParticipantId, isAllowed, conversationId, setConversations }) => {
+const MessageInput = ({ setMessages, OtherParticipantId, isAllowed, conversationId, setConversations, messagesLoading }) => {
     const [message, setMessage] = useState('')
     const toast = useToast()
     const [canAllow, setCanAllow] = useState(false)
     const [loading, setLoading] = useState(true)
     const [isAllowedState, setIsAllowed] = useState(undefined)
     const [user] = useRecoilState(userAtom)
+    const { chatId } = useParams()
+    const { socket } = useSocket()
 
 
     useEffect(() => {
+        const handleNewMessage = (newMessage) => {
+            if (newMessage.conversation == conversationId) {
+                console.log("New message received:", newMessage);
+
+                setMessages((prev) => [...prev, newMessage]);
+                setConversations((prevConversations) =>
+                    prevConversations.map((conv) => {
+                        if (conv?._id === conversationId) {
+                            return {
+                                ...conv,
+                                lastMessage: {
+                                    text: newMessage.text,
+                                    sender: newMessage.sender
+                                }
+                            };
+                        } else {
+                            return conv;
+                        }
+                    })
+                );
+            }
+        };
+
+        if (socket) {
+            socket.on('newMessage', handleNewMessage);
+        }
+
+        // Cleanup listener on component unmount
+        return () => {
+            if (socket) {
+                socket.off('newMessage', handleNewMessage);
+            }
+        };
+    }, [socket, conversationId, setMessages, setConversations]);
+
+
+
+    useEffect(() => {
+        setLoading(true)
         setIsAllowed(isAllowed)
         setLoading(false)
 
-    }, [isAllowed])
+    }, [isAllowed, chatId])
 
     useEffect(() => {
         const canAllowUser = async () => {
@@ -93,7 +136,7 @@ const MessageInput = ({ setMessages, OtherParticipantId, isAllowed, conversation
 
     return (
         <>
-            {isAllowedState && <form onSubmit={(e) => {
+            {!messagesLoading && isAllowedState && <form onSubmit={(e) => {
                 e.preventDefault()
                 handleSendMessage()
             }}>
@@ -104,10 +147,10 @@ const MessageInput = ({ setMessages, OtherParticipantId, isAllowed, conversation
                     </InputRightElement>
                 </InputGroup>
             </form>}
-            {loading && <Spinner />}
+            {loading && ""}
 
-            {!isAllowedState && !canAllow && <Text textAlign={'center'} fontSize={'lg'} my={3} fontWeight={700}>You can't send more messages until this user allowed you</Text>}
-            {!isAllowedState && canAllow &&
+            {!messagesLoading && !isAllowedState && !canAllow && <Text textAlign={'center'} fontSize={'lg'} my={3} fontWeight={700}>You can't send more messages until this user allowed you</Text>}
+            {!messagesLoading && !isAllowedState && canAllow &&
                 <Flex mt={'-10'} mb={3} flexDirection={'column'} justifyContent={'center'} alignItems={'center'} gap={3}>
                     <Text textAlign={'center'} fontSize={'lg'} fontWeight={700}>Do you wanna Allow this user to chat with you?</Text>
                     <Flex gap={3}>
@@ -116,6 +159,15 @@ const MessageInput = ({ setMessages, OtherParticipantId, isAllowed, conversation
                     </Flex>
                 </Flex>
             }
+            {messagesLoading && <form>
+                <InputGroup visibility={"hidden"} pointerEvents={"none"}>
+                    <Input type='text' placeholder='Enter Your Message...' />
+                    <InputRightElement>
+                        <IoSendSharp onClick={handleSendMessage} cursor={'pointer'} />
+                    </InputRightElement>
+                </InputGroup>
+            </form>}
+
         </>
     )
 }

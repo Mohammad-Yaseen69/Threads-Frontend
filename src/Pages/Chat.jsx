@@ -5,6 +5,7 @@ import { GiConversation } from "react-icons/gi"
 import { useParams } from 'react-router-dom';
 import { makeRequest } from '../Utils/api';
 import { toastingSytex } from '../Helper/toastingSyntext';
+import { useSocket } from '../context/socketContext';
 
 const Chat = () => {
     const [convoLoading, setConvoLoading] = useState(true)
@@ -12,6 +13,7 @@ const Chat = () => {
     const { chatId } = useParams()
     const [conversations, setConversations] = useState([])
     const toast = useToast()
+    const {onlineUsers} = useSocket()
 
 
 
@@ -30,6 +32,7 @@ const Chat = () => {
         getConversations()
     }, [])
 
+    console.log(onlineUsers)
     return (
         <Box
             position={'absolute'}
@@ -104,10 +107,12 @@ const Chat = () => {
                     }}>
                         {!convoLoading && conversations.map((conversation) => (
                             <Conversation
+                                key={conversation._id}
                                 convoId={conversation._id}
                                 avatar={conversation.participantsInfo?.pfp?.url}
                                 name={conversation.participantsInfo?.name}
                                 message={conversation.lastMessage?.text}
+                                isOnline={onlineUsers?.includes(conversation.participantsInfo?._id)}
                             />
                         ))}
                     </Box>

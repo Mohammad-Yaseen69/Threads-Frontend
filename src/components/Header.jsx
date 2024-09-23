@@ -32,7 +32,7 @@ const Header = () => {
             />
 
             <Flex alignItems={"center"} gap={2}>
-                {user && <IoIosSettings onClick={() => navigate("/updateInfo")} cursor={'pointer'} fontSize={30} color={colorMode == "dark" ? "white" : "black"} />}
+                {user && <IoIosSettings onClick={() => navigate("/")} cursor={'pointer'} fontSize={30} color={colorMode == "dark" ? "white" : "black"} />}
                 {user && <CgProfile onClick={() => navigate(`/profile/${user.userName}`)} cursor={'pointer'} fontSize={30} color={colorMode == "dark" ? "white" : "black"} />}
                 {user && <IoChatbubbleEllipsesSharp onClick={() => navigate("/chat/" + null)} cursor={'pointer'} fontSize={30} color={colorMode == "dark" ? "white" : "black"} />}
                 {user && <LogoutBtn />}

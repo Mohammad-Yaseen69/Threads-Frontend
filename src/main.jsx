@@ -37,7 +37,7 @@ const routes = createBrowserRouter(
       <Route path='/profile/:userName' element={<UserPage />} />
       <Route path='/post/:postId' element={<PostPage />} />
       <Route path='/auth' element={<Auth />} />
-      <Route path='/updateInfo' element={<UpdateInfo />} />
+      <Route path='/updateProfile' element={<UpdateInfo />} />
       <Route path='/chat/:chatId' element={<Chat />} />
     </Route>
   )
@@ -49,7 +49,7 @@ const theme = extendTheme({ styles, config, colors })
 createRoot(document.getElementById('root')).render(
   <RecoilRoot>
     <ChakraProvider theme={theme}>
-      <SocketContextProvider>  {/* Move SocketContextProvider here */}
+      <SocketContextProvider>
         <RouterProvider router={routes}>
           <ColorModeScript initialColorMode={theme.config.initialColorMode} />
           <App />

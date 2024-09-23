@@ -13,7 +13,7 @@ export const SocketContextProvider = ({ children }) => {
     const [onlineUsers, setOnlineUsers] = useState()
 
     useEffect(() => {
-        const socket = io(`ws://localhost:8000`, {
+        const socket = io(import.meta.env.VITE_SERVER_PATH, {
             query: {
                 userId: user?._id 
             }
@@ -25,7 +25,6 @@ export const SocketContextProvider = ({ children }) => {
 
         socket.on("getOnlineUsers" , (users) => {
             setOnlineUsers(users)
-            console.log(users)
         })
 
         return () => {
@@ -35,7 +34,7 @@ export const SocketContextProvider = ({ children }) => {
     }, [ user?._id])
 
     return (
-        <socketContext.Provider value={{ socket, setSocket }}>
+        <socketContext.Provider value={{ socket, onlineUsers }}>
             {children}
         </socketContext.Provider>
     )

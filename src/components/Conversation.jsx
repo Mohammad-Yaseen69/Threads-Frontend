@@ -2,7 +2,7 @@ import { Avatar, AvatarBadge, Flex, Stack, Text, useColorModeValue, WrapItem } f
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 
-const Conversation = ({ avatar, name, message , convoId}) => {
+const Conversation = ({ avatar, name, message, convoId, isOnline }) => {
     const navigate = useNavigate()
     return (
         <Flex
@@ -25,7 +25,7 @@ const Conversation = ({ avatar, name, message , convoId}) => {
                     }}
                     src={avatar}
                 >
-                    <AvatarBadge boxSize={'1em'} bg="green" />
+                    {isOnline ? <AvatarBadge boxSize={'1em'} bg={"green"} /> : ""}
                 </Avatar>
             </WrapItem>
 

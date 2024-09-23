@@ -150,6 +150,11 @@ const UserHeader = ({
 
             <Text >{bio} </Text>
 
+            {sameUser &&
+                <Button onClick={() => navigate('/updateProfile')}>
+                    Edit Profile
+                </Button>
+            }
 
 
             <Flex flexDirection={{
