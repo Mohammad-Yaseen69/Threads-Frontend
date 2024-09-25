@@ -17,7 +17,6 @@ import { makeRequest } from '../Utils/api'
 
 const ChangePass = () => {
     const [inputs, setInputs] = useState({
-        oldPassword: "",
         newPassword: "",
     })
     const [user, setUser] = useRecoilState(userAtom)
@@ -26,16 +25,6 @@ const ChangePass = () => {
 
 
     const handleUpdate = async () => {
-        if (!inputs.oldPassword) {
-            toast({
-                title: "Error",
-                description: "Please Provide Old Password",
-                status: "error",
-                duration: 3000,
-                isClosable: true,
-            })
-            return
-        }
         if (!inputs.newPassword) {
             toast({
                 title: "Error",
@@ -97,15 +86,6 @@ return (
         >
             <Stack spacing={4}>
 
-                <FormControl id="instagram" isRequired>
-                    <FormLabel>Old Password</FormLabel>
-                    <Input
-                        value={inputs.oldPassword}
-                        onChange={(e) => setInputs((prev) => ({...prev, oldPassword: e.target.value}))}
-                        type="text"
-                        placeholder="Your Old Password"
-                    />
-                </FormControl>
                 <FormControl id="instagram" isRequired>
                     <FormLabel>New Password</FormLabel>
                     <Input

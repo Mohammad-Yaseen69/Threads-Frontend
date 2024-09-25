@@ -22,7 +22,7 @@ const Message = ({ ownMessage, message, otherUserInfo, UserInfo, handleDeleteMes
 
 
                 {ownMessage && (
-                    <Menu colorScheme='black'>
+                    <Menu placement='auto'>
                         <MenuButton
                             as={Box}
                             className='menu-icon'
@@ -37,16 +37,15 @@ const Message = ({ ownMessage, message, otherUserInfo, UserInfo, handleDeleteMes
                             bg={'gray.900'}
                             borderRadius='md'
                             boxShadow='md'
-                            position='absolute'
-                            top='100%'
-                            right={-10}
-                            // p={0}
                             border={'1px solid white'}
                         >
-                            <MenuItem bg={'gray.900'} onClick={() => handleDeleteMessage(messageId)}>Delete Message</MenuItem>
+                            <MenuItem bg={'gray.900'} onClick={() => handleDeleteMessage(messageId)}>
+                                Delete Message
+                            </MenuItem>
                         </MenuList>
                     </Menu>
                 )}
+
             </Flex>
 
             <Text
