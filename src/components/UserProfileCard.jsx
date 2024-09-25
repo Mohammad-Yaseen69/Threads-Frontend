@@ -4,7 +4,7 @@ import { makeRequest } from '../Utils/api'
 import { useToast } from '@chakra-ui/react'
 import { Link } from 'react-router-dom'
 
-const UserProfileCard = ({ userName, fullName, avatar, followed, userId }) => {
+const UserProfileCard = ({ userName, fullName, avatar, followed, userId, display }) => {
     const [followedState, setFollowedState] = useState(followed)
     const [loading, setLoading] = useState(false)
     const toast = useToast()
@@ -37,14 +37,14 @@ const UserProfileCard = ({ userName, fullName, avatar, followed, userId }) => {
     }
 
     return (
-        <Flex alignItems="center" justifyContent="space-between" mb={5}>
+        <Flex display={display} alignItems="center" justifyContent="space-between" mb={5}>
             <Flex alignItems="center">
                 <Avatar src={avatar} size="md" />
                 <Box ml={1} mr={2}>
                     <Link to={`/profile/${userName}`}>
                         <Text fontWeight="bold" >{userName}</Text>
                     </Link>
-                    <Text color="gray.500" fontSize="sm" >{fullName}</Text>
+                    <Text lineHeight={1} color="gray.500" fontSize="sm" >{fullName}</Text>
                 </Box>
             </Flex>
             <Button

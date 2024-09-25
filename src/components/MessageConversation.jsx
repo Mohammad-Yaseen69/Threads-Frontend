@@ -8,6 +8,7 @@ import { useRecoilState } from 'recoil'
 import { userAtom } from '../Atoms/user'
 import { RiDeleteBin5Fill } from "react-icons/ri";
 import { useNavigate } from 'react-router-dom'
+import { useSocket } from '../context/socketContext'
 
 const MessageConversation = ({ conversationId, setAllConversations }) => {
     const [messages, setMessages] = useState([])
@@ -16,8 +17,44 @@ const MessageConversation = ({ conversationId, setAllConversations }) => {
     const [user] = useRecoilState(userAtom)
     const [conversation, setConversations] = useState({})
     const messagesEndRef = useRef(null) // Ref for scrolling to the end
+    const [canAllow, setCanAllow] = useState(false)
     const { isOpen, onOpen, onClose } = useDisclosure()
     const navigate = useNavigate()
+    const { socket } = useSocket()
+
+    useEffect(() => {
+        if (socket) {
+            socket.on("messageDeleted", ({ messageId, conversationId }) => {
+                setMessages((prev) => prev.filter((m) => m._id !== messageId))
+
+                setAllConversations((prevConversations) =>
+                    prevConversations.map((conv) => {
+                        if (conv?._id === conversationId) {
+                            const lastMessage = messages[messages.length - 1] ? messages[messages.length - 1] : messages[messages.length - 2];
+
+                            console.log(lastMessage)
+                            return {
+                                ...conv,
+                                lastMessage: {
+                                    text: lastMessage ? lastMessage.text : '',
+                                    sender: lastMessage ? lastMessage.sender : ''
+                                }
+                            };
+                        } else {
+                            return conv;
+                        }
+                    })
+                );
+
+            })
+        }
+
+
+        return () => {
+            socket?.off("messageDeleted");
+        };
+
+    }, [socket])
 
 
 
@@ -28,6 +65,15 @@ const MessageConversation = ({ conversationId, setAllConversations }) => {
 
             if (response.error) {
                 toastingSytex(toast, 'error', response.error.message)
+            }
+
+            if (!response.response?.data?.conversation?.isAllowed) {
+                const responseCanAllow = await makeRequest(`chats/canAllow/${conversationId}`)
+                if (responseCanAllow.error) {
+                    toastingSytex(toast, 'error', responseCanAllow.error.message)
+                } else {
+                    setCanAllow(responseCanAllow.response?.data?.canAllow)
+                }
             }
 
             setLoading(false)
@@ -171,7 +217,7 @@ const MessageConversation = ({ conversationId, setAllConversations }) => {
                 ))}
                 <div ref={messagesEndRef} /> {/* Empty div to scroll into view */}
             </Flex>
-            <MessageInput messagesLoading={loading} setConversations={setAllConversations} isAllowed={conversation?.isAllowed} conversationId={conversation?._id} OtherParticipantId={conversation?.otherUser?._id} setMessages={setMessages} />
+            <MessageInput messagesLoading={loading} setConversations={setAllConversations} canAllow={canAllow} isAllowed={conversation?.isAllowed} conversationId={conversation?._id} OtherParticipantId={conversation?.otherUser?._id} setMessages={setMessages} />
         </Flex>
     )
 }

@@ -137,6 +137,7 @@ const Home = () => {
                 <Heading as="h3" size="md" mb={4}>Suggested Users</Heading>
                 {suggestedUsers.map(user => (
                     <UserProfileCard
+                        display={user?.userName.length <= 15 ? "flex" : "none"}
                         key={user?._id}
                         userId={user?._id}
                         userName={user?.userName}

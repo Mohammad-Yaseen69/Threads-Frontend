@@ -35,13 +35,13 @@ const Conversation = ({ avatar, name, message, convoId, isOnline }) => {
                     base: "none",
                     md: "block"
                 }} fontWeight={'300'}>
-                    {message.slice(0, 18)}{message.length > 19 ? "..." : ""}
+                    {message?.slice(0, 18)}{message?.length > 19 ? "..." : ""}
                 </Text>
                 <Text display={{
                     base: "block",
                     md: "none"
                 }} fontWeight={'300'}>
-                    {message.slice(0, 40)}{message.length > 40 ? "..." : ""}
+                    {message?.slice(0, 40)}{message?.length > 40 ? "..." : ""}
                 </Text>
             </Stack>
         </Flex>

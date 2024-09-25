@@ -9,15 +9,22 @@ import { userAtom } from '../Atoms/user'
 import { useParams } from 'react-router-dom'
 import { useSocket } from '../context/socketContext'
 
-const MessageInput = ({ setMessages, OtherParticipantId, isAllowed, conversationId, setConversations, messagesLoading }) => {
+const MessageInput = ({ setMessages, OtherParticipantId, isAllowed, conversationId, setConversations, messagesLoading, canAllow }) => {
     const [message, setMessage] = useState('')
     const toast = useToast()
-    const [canAllow, setCanAllow] = useState(false)
     const [loading, setLoading] = useState(true)
     const [isAllowedState, setIsAllowed] = useState(undefined)
     const [user] = useRecoilState(userAtom)
     const { chatId } = useParams()
     const { socket } = useSocket()
+
+    useEffect(() => {
+        socket?.on("conversationAllowed", (conversationId) => {
+            if(conversationId === chatId){
+                setIsAllowed(true)
+            }
+        })
+    },[socket])
 
 
     useEffect(() => {
@@ -64,24 +71,6 @@ const MessageInput = ({ setMessages, OtherParticipantId, isAllowed, conversation
         setLoading(false)
 
     }, [isAllowed, chatId])
-
-    useEffect(() => {
-        const canAllowUser = async () => {
-            if (conversationId) {
-                setLoading(true)
-                const response = await makeRequest(`chats/canAllow/${conversationId}`)
-                if (response.error) {
-                    toastingSytex(toast, 'error', response.error.message)
-                } else {
-                    setCanAllow(response.response?.data?.canAllow)
-
-                }
-                setLoading(false)
-            }
-        }
-        canAllowUser()
-    }, [conversationId])
-
 
     const handleSendMessage = async () => {
         if (!message) return;

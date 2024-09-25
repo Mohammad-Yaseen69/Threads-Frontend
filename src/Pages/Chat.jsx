@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom'
 import React, { useEffect, useState } from 'react'
 import { Box, Button, Flex, Input, Skeleton, SkeletonCircle, Text, useToast } from '@chakra-ui/react'
 import { Conversation, MessageConversation, } from "../components"
@@ -13,9 +14,40 @@ const Chat = () => {
     const { chatId } = useParams()
     const [conversations, setConversations] = useState([])
     const toast = useToast()
-    const {onlineUsers} = useSocket()
+    const { onlineUsers, socket } = useSocket()
+    const navigate = useNavigate()
 
 
+    useEffect(() => {
+        if (socket) {
+            socket.on("newConversation", (newConversation) => {
+                console.log(newConversation)
+                setConversations((prevConversations) => [...prevConversations, newConversation]);
+            });
+        }
+
+        return () => {
+            socket?.off("newConversation");
+        };
+    }, [socket])
+
+    console.log(conversations)
+
+    useEffect(() => {
+        if (socket) {
+            socket.on("conversationDeleted", (conversationId) => {
+                setConversations((prevConversations) => prevConversations.filter((conv) => conv._id !== conversationId));
+                if (conversationId === chatId) {
+                    alert("Other User Deleted The Conversation");
+                    navigate(`/chat/${null}`);
+                }
+            });
+        }
+
+        return () => {
+            socket?.off("conversationDeleted");
+        };
+    }, [socket, chatId])
 
     useEffect(() => {
         async function getConversations() {
@@ -32,7 +64,6 @@ const Chat = () => {
         getConversations()
     }, [])
 
-    console.log(onlineUsers)
     return (
         <Box
             position={'absolute'}
@@ -142,6 +173,7 @@ const Chat = () => {
                 }
 
             </Flex>
+
         </Box>
     )
 }
