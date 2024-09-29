@@ -17,38 +17,45 @@ const MessageInput = ({ setMessages, OtherParticipantId, isAllowed, conversation
     const [user] = useRecoilState(userAtom)
     const { chatId } = useParams()
     const { socket } = useSocket()
+    const [sendLoading, setSendLoading] = useState(false)
 
     useEffect(() => {
         socket?.on("conversationAllowed", (conversationId) => {
-            if(conversationId === chatId){
+            if (conversationId === chatId) {
                 setIsAllowed(true)
             }
         })
-    },[socket])
+    }, [socket])
 
 
     useEffect(() => {
         const handleNewMessage = (newMessage) => {
             if (newMessage.conversation == conversationId) {
-                console.log("New message received:", newMessage);
-
                 setMessages((prev) => [...prev, newMessage]);
-                setConversations((prevConversations) =>
-                    prevConversations.map((conv) => {
-                        if (conv?._id === conversationId) {
-                            return {
-                                ...conv,
-                                lastMessage: {
-                                    text: newMessage.text,
-                                    sender: newMessage.sender
-                                }
-                            };
-                        } else {
-                            return conv;
-                        }
-                    })
-                );
             }
+
+            setConversations((prevConversations) =>
+                prevConversations.map((conv) => {
+                    if (conv?._id === newMessage.conversation) {
+                        return {
+                            ...conv,
+                            lastMessage: {
+                                text: newMessage.text,
+                                sender: newMessage.sender
+                            }
+                        };
+                    } else {
+                        return conv;
+                    }
+                })
+            );
+            
+            setConversations((prevConversations) => {
+                const updatedConvo = prevConversations.find(conv => conv?._id === newMessage.conversation);
+                const otherConvos = prevConversations.filter(conv => conv?._id !== newMessage.conversation);
+
+                return [updatedConvo, ...otherConvos]; // Place updated conversation at the top
+            });
         };
 
         if (socket) {
@@ -74,6 +81,7 @@ const MessageInput = ({ setMessages, OtherParticipantId, isAllowed, conversation
 
     const handleSendMessage = async () => {
         if (!message) return;
+        setSendLoading(true)
 
 
         const response = await makeRequest(`chats/send/${OtherParticipantId}`, {
@@ -85,11 +93,13 @@ const MessageInput = ({ setMessages, OtherParticipantId, isAllowed, conversation
             toastingSytex(toast, 'error', response.error.message)
         }
 
+        setSendLoading(false)
         setMessage('')
         setMessages((prev) => [...prev, response?.response?.data?.messageData])
         setConversations((prevConversations) =>
             prevConversations.map((conv) => {
-                if (conv?._id === conversationId) {
+                const currentConvo = conv?._id === conversationId
+                if (currentConvo) {
                     return {
                         ...conv,
                         lastMessage: {
@@ -102,7 +112,12 @@ const MessageInput = ({ setMessages, OtherParticipantId, isAllowed, conversation
                 }
             })
         );
+        setConversations((prevConversations) => {
+            const updatedConvo = prevConversations.find(conv => conv?._id === conversationId);
+            const otherConvos = prevConversations.filter(conv => conv?._id !== conversationId);
 
+            return [updatedConvo, ...otherConvos]; // Place updated conversation at the top
+        });
 
         if (response?.response?.data?.isAllowed !== undefined) {
             setIsAllowed(response?.response?.data?.isAllowed);
@@ -132,7 +147,9 @@ const MessageInput = ({ setMessages, OtherParticipantId, isAllowed, conversation
                 <InputGroup>
                     <Input value={message} onChange={(e) => setMessage(e.target.value)} type='text' placeholder='Enter Your Message...' />
                     <InputRightElement>
-                        <IoSendSharp onClick={handleSendMessage} cursor={'pointer'} />
+                        <Button isLoading={sendLoading} p={0} bg={'transparent'}>
+                            <IoSendSharp onClick={handleSendMessage} cursor={'pointer'} />
+                        </Button>
                     </InputRightElement>
                 </InputGroup>
             </form>}

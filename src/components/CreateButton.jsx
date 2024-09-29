@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import React, { useRef, useState } from 'react'
 import { Box, Button, Flex, FormControl, Input, Text, FormLabel, useToast, Textarea, Image } from '@chakra-ui/react'
 import { IoIosAdd } from "react-icons/io";
@@ -24,6 +24,7 @@ const CreateButton = () => {
     const [loading, setLoading] = useState(false)
     const [imagePreview, setImagePreview] = useState(null)
     const navigate = useNavigate()
+    const location = useLocation()
 
     const ref = useRef()
 
@@ -86,7 +87,7 @@ const CreateButton = () => {
 
     return (
         <>
-            <Flex zIndex={'12'} onClick={() => setIsOpen(true)} position={'fixed'} bottom={5} cursor={'pointer'} alignItems={'center'} right={{
+            <Flex display={location.pathname.includes('chat') ? "none" : "flex"} zIndex={'12'} onClick={() => setIsOpen(true)} position={'fixed'} bottom={5} cursor={'pointer'} alignItems={'center'} right={{
                 base: '10px',
                 md: '30px',
                 lg: '30px',

@@ -22,7 +22,7 @@ const Chat = () => {
         if (socket) {
             socket.on("newConversation", (newConversation) => {
                 console.log(newConversation)
-                setConversations((prevConversations) => [...prevConversations, newConversation]);
+                setConversations((prevConversations) => [newConversation, ...prevConversations ]);
             });
         }
 

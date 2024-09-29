@@ -24,29 +24,31 @@ const MessageConversation = ({ conversationId, setAllConversations }) => {
 
     useEffect(() => {
         if (socket) {
-            socket.on("messageDeleted", ({ messageId, conversationId }) => {
-                setMessages((prev) => prev.filter((m) => m._id !== messageId))
+            socket.on("messageDeleted", ({ messageId, conversationId: socketConvoId }) => {
 
-                setAllConversations((prevConversations) =>
-                    prevConversations.map((conv) => {
-                        if (conv?._id === conversationId) {
-                            const lastMessage = messages[messages.length - 1] ? messages[messages.length - 1] : messages[messages.length - 2];
+                console.log(socketConvoId, conversationId)
+                if(socketConvoId !== conversationId) return;
+                // Remove the message from the state
+                setMessages((prev) => {
+                    const newMessages = prev.filter((m) => m._id !== messageId);
 
-                            console.log(lastMessage)
-                            return {
-                                ...conv,
-                                lastMessage: {
-                                    text: lastMessage ? lastMessage.text : '',
-                                    sender: lastMessage ? lastMessage.sender : ''
-                                }
-                            };
-                        } else {
+                    // Update the last message for the conversation
+                    const lastMessage = newMessages[newMessages.length - 1] || null;
+                    setAllConversations((prevConversations) =>
+                        prevConversations.map((conv) => {
+                            if (conv?._id === conversationId) {
+                                return {
+                                    ...conv,
+                                    lastMessage: lastMessage ? { text: lastMessage.text, sender: lastMessage.sender } : { text: '', sender: '' }
+                                };
+                            }
                             return conv;
-                        }
-                    })
-                );
+                        })
+                    );
 
-            })
+                    return newMessages; // Return the new state of messages
+                });
+            });
         }
 
 
@@ -103,16 +105,34 @@ const MessageConversation = ({ conversationId, setAllConversations }) => {
     }
 
     const handleDeleteMessage = async (messageId) => {
-        const response = await makeRequest(`chats/delete/message/${messageId}`, {
+        const response = await makeRequest(`chats/delete/message/${messageId}/${conversationId}`, {
             method: "DELETE"
-        })
+        });
         if (response.error) {
-            toastingSytex(toast, 'error', response.error.message)
+            toastingSytex(toast, 'error', response.error.message);
         } else {
-            setMessages((prev) => prev.filter((m) => m._id !== messageId))
-        }
-    }
+            // Update state locally
+            setMessages((prev) => {
+                const newMessages = prev.filter((m) => m._id !== messageId);
 
+                // Update the last message for the conversation
+                const lastMessage = newMessages[newMessages.length - 1] || null;
+                setAllConversations((prevConversations) =>
+                    prevConversations.map((conv) => {
+                        if (conv?._id === conversationId) {
+                            return {
+                                ...conv,
+                                lastMessage: lastMessage ? { text: lastMessage.text, sender: lastMessage.sender } : { text: '', sender: '' }
+                            };
+                        }
+                        return conv;
+                    })
+                );
+
+                return newMessages; // Return the new state of messages
+            });
+        }
+    };
     return (
         <Flex
             flex={{

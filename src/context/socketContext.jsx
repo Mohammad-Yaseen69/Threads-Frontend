@@ -21,8 +21,6 @@ export const SocketContextProvider = ({ children }) => {
 
         setSocket(socket)
 
-        console.log("Asdfaf")
-
         socket.on("getOnlineUsers" , (users) => {
             setOnlineUsers(users)
         })
