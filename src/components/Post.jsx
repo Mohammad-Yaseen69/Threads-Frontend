@@ -145,6 +145,8 @@ const Post = ({ likes, replies, postImg, postTitle, userName, userId, liked, pos
                                 objectFit={'cover'}
                                 src={postImg}
                                 alt="Post image"
+                                loading='lazy'
+                                
                             />
                         </Box>
 
