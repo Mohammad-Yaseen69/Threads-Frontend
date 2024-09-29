@@ -3,11 +3,14 @@ import { useState } from 'react'
 import { makeRequest } from '../Utils/api'
 import { useToast } from '@chakra-ui/react'
 import { Link } from 'react-router-dom'
+import { useRecoilState } from 'recoil'
+import { userAtom } from '../Atoms/user'
 
 const UserProfileCard = ({ userName, fullName, avatar, followed, userId, display }) => {
     const [followedState, setFollowedState] = useState(followed)
     const [loading, setLoading] = useState(false)
     const toast = useToast()
+    const [user] = useRecoilState(userAtom)
 
     const handleFollow = async () => {
         setLoading(true)
@@ -44,17 +47,19 @@ const UserProfileCard = ({ userName, fullName, avatar, followed, userId, display
                     <Link to={`/profile/${userName}`}>
                         <Text fontWeight="bold" >{userName}</Text>
                     </Link>
-                    <Text lineHeight={1} color="gray.500" fontSize="sm" >{fullName?.slice(0 ,30)}{fullName?.length >= 30 && '...'}</Text>
+                    <Text lineHeight={1} color="gray.500" fontSize="sm" >{fullName?.slice(0, 30)}{fullName?.length >= 30 && '...'}</Text>
                 </Box>
             </Flex>
-            <Button
-                onClick={handleFollow}
-                isLoading={loading}
-                backgroundColor={!followedState ? "blue.500" : "gray.400"}
-                color="white"
-            >
-                {followedState ? 'Unfollow' : 'Follow'}
-            </Button>
+            {user._id !== userId &&
+                <Button
+                    onClick={handleFollow}
+                    isLoading={loading}
+                    backgroundColor={!followedState ? "blue.500" : "gray.400"}
+                    color="white"
+                >
+                    {followedState ? 'Unfollow' : 'Follow'}
+                </Button>
+            }
         </Flex>
     )
 }
