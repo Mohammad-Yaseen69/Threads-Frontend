@@ -95,7 +95,7 @@ const CreateButton = () => {
                 <Text fontWeight={'700'}>Post</Text>
             </Flex>
 
-            <Modal isOpen={isOpen} onClose={onClose}>
+            <Modal isCentered isOpen={isOpen} onClose={onClose}>
                 <ModalOverlay />
                 <ModalContent>
                     <ModalHeader>Create Post</ModalHeader>

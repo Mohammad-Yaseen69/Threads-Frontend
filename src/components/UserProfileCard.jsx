@@ -44,7 +44,7 @@ const UserProfileCard = ({ userName, fullName, avatar, followed, userId, display
                     <Link to={`/profile/${userName}`}>
                         <Text fontWeight="bold" >{userName}</Text>
                     </Link>
-                    <Text lineHeight={1} color="gray.500" fontSize="sm" >{fullName}</Text>
+                    <Text lineHeight={1} color="gray.500" fontSize="sm" >{fullName?.slice(0 ,30)}{fullName?.length >= 30 && '...'}</Text>
                 </Box>
             </Flex>
             <Button

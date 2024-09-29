@@ -2,7 +2,7 @@ import { useRecoilState } from 'recoil'
 import { useEffect, useState } from 'react'
 import React from 'react'
 import { makeRequest } from '../Utils/api'
-import { Flex, Spinner, Stack, Box, Heading } from '@chakra-ui/react'
+import { Flex, Spinner, Stack, Box, Heading, SkeletonText, SkeletonCircle, Skeleton } from '@chakra-ui/react'
 import { Post, UserProfileCard } from "../components"
 import { userAtom } from '../Atoms/user'
 // Import the new component
@@ -95,9 +95,22 @@ const Home = () => {
 
             <Stack flex={3}>
                 {loading ? (
-                    <Flex height={'80vh'} alignItems={'center'} justifyContent={'center'}>
-                        <Spinner />
-                    </Flex>
+                    <Stack mt={7} spacing={6}>
+                        {Array(3).fill("").map((_, index) => (
+                            <Flex key={index} gap={3}>
+                                <SkeletonCircle size="10" />
+                                <Flex direction="column" flex="1">
+                                    <SkeletonText noOfLines={1} width={"50%"} mt={3} mb={6} />
+                                    <Flex justifyContent={'space-between'}>
+                                        <SkeletonText noOfLines={1} width={"50%"} />
+                                        <SkeletonText noOfLines={1} width={"15%"} />
+                                    </Flex>
+                                    {/* <SkeletonText ></SkeletonText> */}
+                                    <Skeleton borderRadius={4} height="200px" mt={4} />
+                                </Flex>
+                            </Flex>
+                        ))}
+                    </Stack>
                 ) : (
                     posts.map((post) => {
                         const likeCount = post?.likes.length
@@ -130,22 +143,34 @@ const Home = () => {
             <Box display={{
                 base: 'none',
                 md: 'block'
-            }} flex={1} mb={5} mt={4} ml={{
+            }} flex={loading ? 2 : 1} mb={5} mt={4} ml={{
                 base: 0,
                 md: 4
             }}>
                 <Heading as="h3" size="md" mb={4}>Suggested Users</Heading>
-                {suggestedUsers.map(user => (
-                    <UserProfileCard
-                        display={user?.userName.length <= 15 ? "flex" : "none"}
-                        key={user?._id}
-                        userId={user?._id}
-                        userName={user?.userName}
-                        fullName={user?.name}
-                        avatar={user?.pfp?.url}
-                        followed={user?.isFollowed}
-                    />
-                ))}
+                {loading ? (
+                    <Flex flexDirection="column" gap={3}>
+                        {Array.from({ length: 3 }).map((_, index) => (
+                            <Flex key={index} alignItems="center" gap={3}>
+                                <SkeletonCircle size="10" />
+                                <SkeletonText noOfLines={1} width={"70%"} />
+                            </Flex>
+                        ))}
+                    </Flex>
+                ) : (
+                    suggestedUsers.map(user => (
+                        <UserProfileCard
+                            key={user?._id}
+                            userId={user?._id}
+                            userName={user?.userName}
+                            fullName={user?.name}
+                            display={user?.userName.length <= 15 ? "flex" : "none"}
+                            avatar={user?.pfp?.url}
+                            followed={user?.isFollowed}
+                        />
+                    ))
+                )}
+
             </Box>
         </Flex>
     )

@@ -126,7 +126,6 @@ const Chat = () => {
                                 <Flex w={'full'} flexDirection={'column'} gap={3}>
                                     <Skeleton width={'80px'} height={"10px"} />
                                     <Skeleton width={'90%'} height={"8px"} />
-                                    <Skeleton width={'90%'} height={"8px"} />
                                 </Flex>
                             </Flex>
                         ))

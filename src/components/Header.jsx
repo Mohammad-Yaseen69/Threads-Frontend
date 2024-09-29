@@ -8,6 +8,8 @@ import { IoHome } from "react-icons/io5";
 import { IoIosSettings } from "react-icons/io";
 import { CgProfile } from "react-icons/cg";
 import { IoChatbubbleEllipsesSharp } from "react-icons/io5";
+import { IoSearch } from "react-icons/io5";
+
 
 const Header = () => {
     const { colorMode, toggleColorMode } = useColorMode()
@@ -16,7 +18,12 @@ const Header = () => {
 
     return (
         <Flex position={"relative"} justifyContent={user ? 'space-between' : 'center'} alignItems={"center"} mt={6} mb={12}>
-            {user && <IoHome onClick={() => navigate("/")} cursor={'pointer'} fontSize={30} color={colorMode == "dark" ? "white" : "black"} />}
+            <Flex gap={2}>
+                {user && <IoHome onClick={() => navigate("/")} cursor={'pointer'} fontSize={30} color={colorMode == "dark" ? "white" : "black"} />}
+                {user && <CgProfile onClick={() => navigate(`/profile/${user.userName}`)} cursor={'pointer'} fontSize={30} color={colorMode == "dark" ? "white" : "black"} />}
+                {user && <IoIosSettings onClick={() => navigate("/")} cursor={'pointer'} fontSize={30} color={colorMode == "dark" ? "white" : "black"} />}
+            </Flex>
+
             <Image
                 src={colorMode === "light" ? "/dark-logo.svg" : "/light-logo.svg"}
                 w={6}
@@ -24,16 +31,10 @@ const Header = () => {
                 alt='logo'
                 onClick={toggleColorMode}
                 cursor={"pointer"}
-                position={'relative'}
-                left={{
-                    base: '0',
-                    sm: user ? '50px' : '0',
-                }}
             />
 
             <Flex alignItems={"center"} gap={2}>
-                {user && <IoIosSettings onClick={() => navigate("/")} cursor={'pointer'} fontSize={30} color={colorMode == "dark" ? "white" : "black"} />}
-                {user && <CgProfile onClick={() => navigate(`/profile/${user.userName}`)} cursor={'pointer'} fontSize={30} color={colorMode == "dark" ? "white" : "black"} />}
+                {user && <IoSearch onClick={() => navigate("/search")} cursor={'pointer'} fontSize={30} color={colorMode == "dark" ? "white" : "black"} />}
                 {user && <IoChatbubbleEllipsesSharp onClick={() => navigate("/chat/" + null)} cursor={'pointer'} fontSize={30} color={colorMode == "dark" ? "white" : "black"} />}
                 {user && <LogoutBtn />}
             </Flex>
