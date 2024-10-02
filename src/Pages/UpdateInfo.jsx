@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { UpdateDetails, ChangeUserName, ChangePass } from "../components"
+import { UpdateDetails, ChangeUserName, ChangePassword } from "../components"
 import { useRecoilState } from "recoil"
 import { userAtom } from "../Atoms/user"
 import { useNavigate } from "react-router-dom"
@@ -70,7 +70,7 @@ const UpdateInfo = () => {
                 </Flex>
             </Flex>
             {activeTab == 'info' && <UpdateDetails />}
-            {activeTab == 'pass' && <ChangePass />}
+            {activeTab == 'pass' && <ChangePassword />}
             {activeTab == 'userN' && <ChangeUserName />}
         </div>
     )
