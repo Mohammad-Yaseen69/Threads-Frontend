@@ -8,6 +8,7 @@ import { useRecoilState } from 'recoil'
 import { userAtom } from '../Atoms/user'
 import { useParams } from 'react-router-dom'
 import { useSocket } from '../context/socketContext'
+import messageSound from '../Helper/livechat-129007.mp3'
 
 const MessageInput = ({ setMessages, OtherParticipantId, isAllowed, conversationId, setConversations, messagesLoading, canAllow }) => {
     const [message, setMessage] = useState('')
@@ -33,6 +34,13 @@ const MessageInput = ({ setMessages, OtherParticipantId, isAllowed, conversation
             if (newMessage.conversation == conversationId) {
                 setMessages((prev) => [...prev, newMessage]);
             }
+
+            
+            if(!document.hasFocus()){
+                const audio = new Audio(messageSound);
+                audio.play();
+            }
+
 
             setConversations((prevConversations) =>
                 prevConversations.map((conv) => {

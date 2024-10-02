@@ -48,14 +48,19 @@ const Message = ({ ownMessage, message, otherUserInfo, UserInfo, handleDeleteMes
 
             </Flex>
 
-            <Text
+
+            <Box
                 maxW={'350px'}
                 bg={ownMessage ? 'blue.500' : 'gray.600'}
                 p={1}
                 borderRadius={"md"}
             >
-                {message}
-            </Text>
+                <Text>
+                    {message}
+                </Text>
+            </Box>
+
+
 
             {ownMessage && (
                 <Avatar cursor={'pointer'} onClick={() => navigate(`/profile/${UserInfo?.userName}`)} size={'sm'} src={UserInfo?.pfp?.url} />

@@ -21,7 +21,6 @@ const Header = () => {
             <Flex gap={2}>
                 {user && <IoHome onClick={() => navigate("/")} cursor={'pointer'} fontSize={30} color={colorMode == "dark" ? "white" : "black"} />}
                 {user && <CgProfile onClick={() => navigate(`/profile/${user.userName}`)} cursor={'pointer'} fontSize={30} color={colorMode == "dark" ? "white" : "black"} />}
-                {user && <IoIosSettings onClick={() => navigate("/")} cursor={'pointer'} fontSize={30} color={colorMode == "dark" ? "white" : "black"} />}
             </Flex>
 
             <Image
